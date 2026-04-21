@@ -25,6 +25,8 @@ private:
 	int playerFlag;			//生存フラグ
 	int playerHP;			//体力
 
+	int tmp;
+
 	//弾（自分の）の変数
 	static const int mybulletnum = 30;	//最大表示数
 	Math::Matrix mybulletMat[mybulletnum];	//座標回転拡縮を管理する行列

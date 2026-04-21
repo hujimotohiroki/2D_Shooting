@@ -1,0 +1,427 @@
+#include "GameScene.h"
+#include "time.h"
+#define rep(i,N) for(int i=0;i<N;i++)
+//プログラムを打つときは半角英数字で
+//コメントを打つ時は行の頭にスラッシュ２つ
+//1秒間に60回実行される(60FPSの場合)
+C_GameScene::~C_GameScene()
+{
+	charaTex.Release();
+	backTex1.Release();
+	backTex2.Release();
+	enemyTex.Release();
+	mybulletTex.Release();
+	expTex.Release();
+}
+void C_GameScene::Draw2D()
+{
+	//背景
+	SHADER.m_spriteShader.SetMatrix(backMat1);
+	SHADER.m_spriteShader.DrawTex(&backTex1, Math::Rectangle{ 0, 0, 1280, 720 }, 1.0f);
+	SHADER.m_spriteShader.SetMatrix(backMat2);
+	SHADER.m_spriteShader.DrawTex(&backTex2, Math::Rectangle{ 0, 0, 1280, 720 }, 1.0f);
+
+	if (playerFlag == 1) {
+		SHADER.m_spriteShader.SetMatrix(charaMat);
+		SHADER.m_spriteShader.DrawTex(&charaTex, Math::Rectangle{ (int)(playerAnimCnt) * 64,0, 64, 64 }, 1.0f);
+	}
+
+	rep(en, enemynum) {
+		if (enemyFlag[en] == 1) {
+			SHADER.m_spriteShader.SetMatrix(enemyMat[en]);
+			SHADER.m_spriteShader.DrawTex(&enemyTex, Math::Rectangle{ 0, 0, 64, 64 }, 1.0f);
+		}
+	}
+
+	if (bossFlag == 1) {
+		SHADER.m_spriteShader.SetMatrix(bossMat);
+		SHADER.m_spriteShader.DrawTex(&enemyTex, Math::Rectangle{ 0,0, 64, 64 }, 1.0f);
+	}
+
+	rep(ex, expnum) {
+		SHADER.m_spriteShader.SetMatrix(expMat[ex]);
+		if (expFlag[ex])SHADER.m_spriteShader.DrawTex(&expTex, Math::Rectangle{ (int)(expAnimCnt[ex]) * 64, 0, 64, 64 }, 1.0f);
+	}
+
+
+	rep(bu, mybulletnum) {
+		if (mybulletFlag[bu]) {
+			SHADER.m_spriteShader.SetMatrix(mybulletMat[bu]);
+			SHADER.m_spriteShader.DrawTex(&mybulletTex, Math::Rectangle{ 0, 0, 16, 16 }, 1.0f);
+		}
+
+	}
+
+	char text[200];
+	sprintf_s(text, sizeof(text), "Score %d", score);
+	SHADER.m_spriteShader.DrawString(-608, 328, text, Math::Vector4(1, 1, 0, 1));
+	if (playerFlag == 0)SHADER.m_spriteShader.DrawString(0, 0, "GAMEOVER", Math::Vector4(1, 1, 0, 1));\
+}
+//1秒間に60回実行される(60FPSの場合)
+void C_GameScene::Update()
+{
+	float movement = 10;
+	if (playerFlag == 1) {
+		if (GetAsyncKeyState(VK_SHIFT) & 0x8000) {
+			movement = 5;
+		}
+		if (GetAsyncKeyState(VK_RIGHT) & 0x8000) {
+			playerX += movement;
+		}
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
+			playerX -= movement;
+		}
+		if (GetAsyncKeyState(VK_UP) & 0x8000) {
+			playerY += movement;
+		}
+		if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
+			playerY -= movement;
+		}
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
+			if (shotWait == 0) {
+				rep(bu, mybulletnum) {
+					if (mybulletFlag[bu] == 0) {
+						mybulletFlag[bu] = 1;
+						mybulletX[bu] = playerX;
+						mybulletY[bu] = playerY;
+						shotWait = 10;
+						break;
+					}
+				}
+			}
+		}
+		if (playerX > 608) playerX = 608;
+		if (playerX < -608)playerX = -608;
+		if (playerY > 328)playerY = 328;
+		if (playerY < -328)playerY = -328;
+		//↑プレイヤーの操作
+
+		rep(en, enemynum) {
+			if (enemyFlag[en] == 1) {
+				if (IS_HIT(playerX, playerY, enemyX[en], enemyY[en], playerRadius + enemyRadius[en])) {
+					playerHP -= 10;
+					enemyFlag[en] = 0;
+					Explosion(playerX, playerY);
+				}
+			}
+		}
+		if (bossFlag == 1) {
+			if (IS_HIT(playerX, playerY, bossX, bossY, bossRadius + playerRadius)) {
+				playerHP = 0;
+				Explosion(playerX, playerY);
+			}
+		}
+		//プレイヤーの死亡判定
+		if (playerHP == 0) {
+			playerFlag = 0;
+		}
+		playerAnimCnt++;
+		if (playerAnimCnt == 4)playerAnimCnt = 0;
+	}
+
+	shotWait--;
+	if (shotWait < 0)shotWait = 0;
+	rep(ex, expnum) {
+		if (expFlag[ex] == 1) expAnimCnt[ex] += 0.5f;
+		if (expAnimCnt[ex] == 8) {
+			expFlag[ex] = 0;
+			expAnimCnt[ex] = 0;
+		}
+	}
+	//爆発アニメーション
+
+	//敵の撃破
+	rep(en, enemynum) {
+		rep(bu, mybulletnum) {
+			if (mybulletFlag[bu] != 0 && enemyFlag[en] != 0) {
+				if (IS_HIT(enemyX[en], enemyY[en], mybulletX[bu], mybulletY[bu], enemyRadius[en] + mybulletRadius[bu])) {
+					switch (mybulletFlag[bu]) {
+					case 1:
+						enemyHP[en]--;
+					}
+					mybulletFlag[bu] = 0;
+					mybulletY[bu] = 456;
+				}
+			}
+		}
+
+	}
+
+	//敵の動き
+	rep(en, enemynum) {
+		if (enemyFlag[en] == 1) {
+			if (enemyTimer[en] < 60) {
+				enemyY[en] -= enemyspeedY[en];
+				enemyX[en] += enemyspeedX[en];
+				if (enemyY[en] < -392) enemyY[en] = 392;
+				if (enemyX[en] > 608) enemyX[en] = -608;
+				if (enemyX[en] < -608) enemyX[en] = 608;
+			}
+			//自機狙いを打ちたい
+		}
+	}
+
+	//敵の復活
+	if (rand() % 100 < 2) {
+		rep(en, enemynum) {
+			if (enemyFlag[en] == 0) {
+				enemyX[en] = 608;
+				enemyY[en] = rand() % 655 - 328;
+				enemyFlag[en] = 1;
+				enemyspeedX[en] = -1;
+				enemyspeedY[en] = 0;
+				enemySize[en] = 1.0f;
+				enemyRadius[en] = 32.0f;
+				enemyTimer[en] = 0;
+				//Flagによって変えたい
+				switch (enemyFlag[en]) {
+				case 1:
+					enemyHP[en] = 3;
+					break;
+				}				
+				break;
+			}
+		}
+	}
+
+
+	if (GetAsyncKeyState(VK_RETURN) & 0x8000) RESET();//関数宣言したらALT+Enterで関数定義
+
+	if (backY1 < -717)backY1 = 717;
+	if (backY2 < -717)backY2 = 717;
+	backY1 -= 3;
+	backY2 -= 3;
+
+	rep(bu, mybulletnum) {
+		if (mybulletX[bu] > 700) mybulletFlag[bu] = 0;
+		if (mybulletFlag[bu])mybulletX[bu] += 15;
+	}
+	//弾の動き
+
+	//ボスの処理
+	if (score >= 50 && !bossFlag) bossFlag = 1;
+	if (bossFlag == 1) {
+		bossAngle++;
+		if (bossAngle >= 360) bossAngle -= 360;
+		bossY -= 0.5f;
+		if (bossY < 0)bossY = 0;
+		rep(bu, mybulletnum) {
+			if (mybulletFlag[bu] == 1) {
+				if (IS_HIT(bossX, bossY, mybulletX[bu], mybulletY[bu], bossRadius + mybulletRadius[bu])) {
+					mybulletFlag[bu] = 0;
+					Explosion(mybulletX[bu], mybulletY[bu]);
+					bossHP--;
+					if (bossHP <= 0) {
+						bossFlag++;
+						score += 10000;
+					}
+					mybulletY[bu] = 456;
+				}
+			}
+		}
+	}
+
+	//時間経過
+	rep(bu, mybulletnum) {
+		if (mybulletFlag[bu] != 0) {
+			mybulletTimer[bu]++;
+		}
+	}
+	rep(bu, enemybulletnum) {
+		if (enemybulletFlag[bu] != 0) {
+			enemybulletTimer[bu]++;
+		}
+	}
+
+	
+	rep(en, enemynum) {
+		if (enemyFlag[en] != 0) {
+			if (enemyHP[en] <= 0) {
+				enemyFlag[en] = 0;
+				score += 100;
+				Explosion(enemyX[en], enemyY[en]);
+			}
+			else {
+				enemyTimer[en]++;
+			}
+		}
+	}
+
+	//↓Updateの最後に行列作成↓↓
+	Math::Matrix trans = Math::Matrix::CreateTranslation(playerX, (int)(playerY), 0);
+	Math::Matrix scale = Math::Matrix::CreateScale(playerSize, playerSize, 0);
+	Math::Matrix rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(270));
+	charaMat = scale * rotate * trans;
+	trans = Math::Matrix::CreateTranslation(bossX, (int)(bossY), 0);
+	scale = Math::Matrix::CreateScale(bossSize, bossSize, 0);
+	rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(bossAngle));
+	bossMat = scale * rotate * trans;
+	backMat1 = Math::Matrix::CreateTranslation(0, backY1, 0);
+	backMat2 = Math::Matrix::CreateTranslation(0, backY2, 0);
+	rep(bu, mybulletnum) {
+		trans = Math::Matrix::CreateTranslation(mybulletX[bu], (int)(mybulletY[bu]), 0);
+		scale = Math::Matrix::CreateScale(mybulletSize[bu], mybulletSize[bu], 0);
+		rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(mybulletAngle[bu]));
+		mybulletMat[bu] = scale * rotate * trans;
+	}
+	rep(bu, enemybulletnum) {
+		trans = Math::Matrix::CreateTranslation(enemybulletX[bu], (int)(enemybulletY[bu]), 0);
+		scale = Math::Matrix::CreateScale(enemybulletSize[bu], enemybulletSize[bu], 0);
+		rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(enemybulletAngle[bu]));
+		enemybulletMat[bu] = scale * rotate * trans;
+	}
+	rep(en, enemynum) enemyMat[en] = Math::Matrix::CreateTranslation(enemyX[en], enemyY[en], 0);
+	rep(ex, expnum) expMat[ex] = Math::Matrix::CreateTranslation(expX[ex], expY[ex], 0);
+}
+
+//ゲーム開始時のみ実行される
+void C_GameScene::Init()
+{
+	// 画像の読み込み処理
+	charaTex.Load("Texture/player.png");
+	backTex1.Load("Texture/back.png");
+	backTex2.Load("Texture/back.png");
+	enemyTex.Load("Texture/enemy.png");
+	mybulletTex.Load("Texture/bullet.png");
+	enemybulletTex.Load("Texture/bullet.png");
+	expTex.Load("Texture/explosion.png");
+	backY1 = 0;
+	backY2 = 720;
+
+	bossX = 0;
+	bossY = 456;
+	bossHP = 100;
+	bossSize = 3;
+	bossRadius = 96;
+	bossAngle = 0;
+	bossTimer = 0;
+
+	playerX = 0;
+	playerY = -392;
+	playerFlag = 1;
+	playerAnimCnt = 0;
+	playerSize = 1.0f;
+	playerRadius = 32.0f;
+	playerHP = 100;
+
+	rep(bu, mybulletnum) {
+		mybulletX[bu] = 0;
+		mybulletY[bu] = 0;
+		mybulletspeedX[bu] = 0;
+		mybulletspeedY[bu] = 0;
+		mybulletSize[bu] = 1.0f;
+		mybulletRadius[bu] = 8.0f;
+		mybulletFlag[bu] = 0;
+		mybulletTimer[bu] = 0;
+	}
+
+	rep(bu, enemybulletnum) {
+		enemybulletX[bu] = 0;
+		enemybulletY[bu] = 0;
+		enemybulletspeedX[bu] = 0;
+		enemybulletspeedY[bu] = 0;
+		enemybulletSize[bu] = 1.0f;
+		enemybulletRadius[bu] = 8.0f;
+		enemybulletFlag[bu] = 0;
+		enemybulletTimer[bu] = 0;
+	}
+
+	bucount = 0;
+	shotWait = 0;
+	//弾の初期設定
+	srand(time(0));
+	rand();
+
+	rep(en, enemynum) {
+		enemyX[en] = 608;
+		enemyY[en] = rand() % 655 - 328;
+		enemyFlag[en] = 1;
+		enemyspeedX[en] = -1;
+		enemyspeedY[en] = 0;
+		enemySize[en] = 1.0f;
+		enemyRadius[en] = 32.0f;
+		//Flagによって変えたい
+		enemyHP[en] = 3;
+		enemyTimer[en] = 0;
+	}
+	//敵の初期設定
+	score = 0;
+	rep(ex, expnum) {
+		expX[ex] = 0;
+		expY[ex] = 0;
+		expFlag[ex] = 0;
+		expAnimCnt[ex] = 0;
+	}
+	//爆発の初期設定
+}
+//ゲーム終了時のみ実行される
+void C_GameScene::Release()
+{
+	// 画像の解放処理
+	charaTex.Release();
+	backTex1.Release();
+	backTex2.Release();
+	enemyTex.Release();
+	mybulletTex.Release();
+	expTex.Release();
+}
+
+
+
+void C_GameScene::RESET()
+{
+	playerFlag = 1;
+	rep(en, enemynum) {
+		enemyX[en] = 608;
+		enemyY[en] = rand() % 655 - 328;
+		enemyFlag[en] = 1;
+		enemyspeedX[en] = -1;
+		enemyspeedY[en] = 0;
+		enemySize[en] = 1.0f;
+		enemyRadius[en] = 32.0f;
+	}
+	rep(bu, mybulletnum) {
+		mybulletX[bu] = 0;
+		mybulletY[bu] = 0;
+		mybulletspeedX[bu] = 0;
+		mybulletspeedY[bu] = 0;
+		mybulletFlag[bu] = 0;
+		mybulletTimer[bu] = 0;
+	}
+
+	rep(bu, enemybulletnum) {
+		enemybulletX[bu] = 0;
+		enemybulletY[bu] = 0;
+		enemybulletspeedX[bu] = 0;
+		enemybulletspeedY[bu] = 0;
+		enemybulletFlag[bu] = 0;
+		enemybulletTimer[bu] = 0;
+	}
+
+	bossFlag = 0;
+	bossX = 0;
+	bossY = 456;
+	bossHP = 100;
+	playerX = 0;
+	playerY = -200;
+	rep(ex, expnum)expFlag[ex] = 0;
+	score = 0;
+}
+
+void C_GameScene::Explosion(float x, float y)
+{
+	int ex = 0;
+	while (expFlag[ex])ex++;
+	expX[ex] = x;
+	expY[ex] = y;
+	expFlag[ex] = 1;
+}
+
+int C_GameScene::IS_HIT(float aX, float aY, float bX, float bY, float r)
+{
+	float a = aX - bX;
+	float b = aY - bY;
+	float c = sqrt(a * a + b * b);
+	if (c < r) return 1;
+	else return 0;
+}

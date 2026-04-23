@@ -1,13 +1,14 @@
 #pragma once
 
 class Scene;
+class C_Player;
 
 class C_GameScene
 {
 private:
 
 	// テクスチャ ・・・ 画像データ
-	KdTexture charaTex;
+	
 	KdTexture backTex1;
 	KdTexture backTex2;
 	KdTexture enemyTex;
@@ -15,15 +16,9 @@ private:
 	KdTexture enemybulletTex;
 	KdTexture expTex;
 
-	//プレイヤー(自機)の変数
-	Math::Matrix charaMat; //行列、座標・回転・拡縮を管理
-	float playerX;			//X座標
-	float playerY;			//Y座標
-	float playerAnimCnt;	//どのアニメーションか
-	float playerSize;		//大きさの倍率
-	float playerRadius;		//半径何ドットで描写するか
-	int playerFlag;			//生存フラグ
-	int playerHP;			//体力
+	C_Player* m_player = nullptr;
+
+
 
 	//弾（自分の）の変数
 	static const int mybulletnum = 30;	//最大表示数

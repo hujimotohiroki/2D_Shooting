@@ -1,16 +1,26 @@
 #pragma once
 
 class C_CharaBase {
-private:
-	float X;//X座標
-	float Y;//Y座標
-	float MoveSpeed;//移動速度　これを分解してXY速度を出す？
-	float SpeedX;//X軸の速度
-	float SpeedY;//Y軸の速度
+protected:
+	Math::Matrix Mat;
+	float X;
+	float Y;
+	float MoveSpeed;
+	float SpeedX;
+	float SpeedY;
+	float Size;			//元画像を何倍にするか
+	float Radius;		//正確なサイズ（半径）
+	int Flag;			//種類
+	int Anim;			//描画状態
+	int Timer;
+	int HP;
+	KdTexture Tex;
 public:
 	C_CharaBase();
-	~C_CharaBase();
+	~C_CharaBase() { Release(); }
 	void Init();
 	void Update();
 	void Draw();
+private:
+	void Release();
 };

@@ -1,12 +1,12 @@
 #include "GameScene.h"
 #include "time.h"
+#include "../Chara/Player.h"
 #define rep(i,N) for(int i=0;i<N;i++)
 //プログラムを打つときは半角英数字で
 //コメントを打つ時は行の頭にスラッシュ２つ
 //1秒間に60回実行される(60FPSの場合)
 C_GameScene::~C_GameScene()
 {
-	charaTex.Release();
 	backTex1.Release();
 	backTex2.Release();
 	enemyTex.Release();
@@ -21,9 +21,9 @@ void C_GameScene::Draw2D()
 	SHADER.m_spriteShader.SetMatrix(backMat2);
 	SHADER.m_spriteShader.DrawTex(&backTex2, Math::Rectangle{ 0, 0, 1280, 720 }, 1.0f);
 
-	if (playerFlag == 1) {
-		SHADER.m_spriteShader.SetMatrix(charaMat);
-		SHADER.m_spriteShader.DrawTex(&charaTex, Math::Rectangle{ (int)(playerAnimCnt) * 64,0, 64, 64 }, 1.0f);
+	if (m_player) {
+		m_player->Draw();
+		
 	}
 
 	rep(en, enemynum) {
@@ -55,45 +55,17 @@ void C_GameScene::Draw2D()
 	char text[200];
 	sprintf_s(text, sizeof(text), "Score %d", score);
 	SHADER.m_spriteShader.DrawString(-608, 328, text, Math::Vector4(1, 1, 0, 1));
-	if (playerFlag == 0)SHADER.m_spriteShader.DrawString(0, 0, "GAMEOVER", Math::Vector4(1, 1, 0, 1));\
+	if (!m_player)SHADER.m_spriteShader.DrawString(0, 0, "GAMEOVER", Math::Vector4(1, 1, 0, 1));\
 }
 //1秒間に60回実行される(60FPSの場合)
 void C_GameScene::Update()
 {
 	float movement = 10;
-	if (playerFlag == 1) {
-		if (GetAsyncKeyState(VK_SHIFT) & 0x8000) {
-			movement = 5;
-		}
-		if (GetAsyncKeyState(VK_RIGHT) & 0x8000) {
-			playerX += movement;
-		}
-		if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
-			playerX -= movement;
-		}
-		if (GetAsyncKeyState(VK_UP) & 0x8000) {
-			playerY += movement;
-		}
-		if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
-			playerY -= movement;
-		}
-		if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
-			if (shotWait == 0) {
-				rep(bu, mybulletnum) {
-					if (mybulletFlag[bu] == 0) {
-						mybulletFlag[bu] = 1;
-						mybulletX[bu] = playerX;
-						mybulletY[bu] = playerY;
-						shotWait = 10;
-						break;
-					}
-				}
-			}
-		}
-		if (playerX > 608) playerX = 608;
-		if (playerX < -608)playerX = -608;
-		if (playerY > 328)playerY = 328;
-		if (playerY < -328)playerY = -328;
+	if (m_player) {
+		m_player->Update();
+	}
+	/*if (playerFlag == 1) {
+		
 		//↑プレイヤーの操作
 
 		rep(en, enemynum) {
@@ -117,7 +89,7 @@ void C_GameScene::Update()
 		}
 		playerAnimCnt++;
 		if (playerAnimCnt == 4)playerAnimCnt = 0;
-	}
+	}*/
 
 	shotWait--;
 	if (shotWait < 0)shotWait = 0;
@@ -248,13 +220,10 @@ void C_GameScene::Update()
 	}
 
 	//↓Updateの最後に行列作成↓↓
-	Math::Matrix trans = Math::Matrix::CreateTranslation(playerX, (int)(playerY), 0);
-	Math::Matrix scale = Math::Matrix::CreateScale(playerSize, playerSize, 0);
-	Math::Matrix rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(270));
-	charaMat = scale * rotate * trans;
-	trans = Math::Matrix::CreateTranslation(bossX, (int)(bossY), 0);
-	scale = Math::Matrix::CreateScale(bossSize, bossSize, 0);
-	rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(bossAngle));
+	
+	Math::Matrix trans = Math::Matrix::CreateTranslation(bossX, (int)(bossY), 0);
+	Math::Matrix scale = Math::Matrix::CreateScale(bossSize, bossSize, 0);
+	Math::Matrix rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(bossAngle));
 	bossMat = scale * rotate * trans;
 	backMat1 = Math::Matrix::CreateTranslation(0, backY1, 0);
 	backMat2 = Math::Matrix::CreateTranslation(0, backY2, 0);
@@ -278,7 +247,7 @@ void C_GameScene::Update()
 void C_GameScene::Init()
 {
 	// 画像の読み込み処理
-	charaTex.Load("Texture/player.png");
+	
 	backTex1.Load("Texture/back.png");
 	backTex2.Load("Texture/back.png");
 	enemyTex.Load("Texture/enemy.png");
@@ -296,13 +265,9 @@ void C_GameScene::Init()
 	bossAngle = 0;
 	bossTimer = 0;
 
-	playerX = 0;
-	playerY = -392;
-	playerFlag = 1;
-	playerAnimCnt = 0;
-	playerSize = 1.0f;
-	playerRadius = 32.0f;
-	playerHP = 100;
+	m_player = new C_Player();
+	m_player->Init();
+
 
 	rep(bu, mybulletnum) {
 		mybulletX[bu] = 0;
@@ -358,7 +323,6 @@ void C_GameScene::Init()
 void C_GameScene::Release()
 {
 	// 画像の解放処理
-	charaTex.Release();
 	backTex1.Release();
 	backTex2.Release();
 	enemyTex.Release();
@@ -370,7 +334,7 @@ void C_GameScene::Release()
 
 void C_GameScene::RESET()
 {
-	playerFlag = 1;
+	m_player->Reset();
 	rep(en, enemynum) {
 		enemyX[en] = 608;
 		enemyY[en] = rand() % 655 - 328;
@@ -402,8 +366,7 @@ void C_GameScene::RESET()
 	bossX = 0;
 	bossY = 456;
 	bossHP = 100;
-	playerX = 0;
-	playerY = -200;
+	
 	rep(ex, expnum)expFlag[ex] = 0;
 	score = 0;
 }

@@ -49,6 +49,9 @@
     <Filter Include="Src\Application\シーンについて">
       <UniqueIdentifier>{998e72e2-f217-4407-b28f-f814f1c06f6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\Chara\Enemy">
+      <UniqueIdentifier>{3c64c87a-f944-4c20-a7c9-32964c0607bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -153,6 +156,9 @@
     <ClInclude Include="Src\Application\Chara\Player.h">
       <Filter>Src\Application\Chara</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\Chara\Enemy\Enemy.h">
+      <Filter>Src\Application\Chara\Enemy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -226,6 +232,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\Chara\Player.cpp">
       <Filter>Src\Application\Chara</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Chara\Enemy\Enemy.cpp">
+      <Filter>Src\Application\Chara\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

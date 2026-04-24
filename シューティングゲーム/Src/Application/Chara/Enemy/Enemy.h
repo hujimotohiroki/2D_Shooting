@@ -1,15 +1,14 @@
 #pragma once
-#include "CharaBase.h"
+#include"../CharaBase.h"
 class C_CharaBase;
 
-class C_Player : public C_CharaBase  {
+class C_Enemy :public C_CharaBase {
 private:
 	void Release();
-	float mp;
 public:
 
-	C_Player();
-	~C_Player();
+	C_Enemy();
+	~C_Enemy();
 	void Init();
 	void Update();
 	void Draw();

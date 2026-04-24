@@ -1,6 +1,7 @@
 #include "GameScene.h"
 #include "time.h"
 #include "../Chara/Player.h"
+#include "../Chara/Enemy/Enemy.h"
 #define rep(i,N) for(int i=0;i<N;i++)
 //プログラムを打つときは半角英数字で
 //コメントを打つ時は行の頭にスラッシュ２つ
@@ -9,7 +10,6 @@ C_GameScene::~C_GameScene()
 {
 	backTex1.Release();
 	backTex2.Release();
-	enemyTex.Release();
 	mybulletTex.Release();
 	expTex.Release();
 }
@@ -27,10 +27,7 @@ void C_GameScene::Draw2D()
 	}
 
 	rep(en, enemynum) {
-		if (enemyFlag[en] == 1) {
-			SHADER.m_spriteShader.SetMatrix(enemyMat[en]);
-			SHADER.m_spriteShader.DrawTex(&enemyTex, Math::Rectangle{ 0, 0, 64, 64 }, 1.0f);
-		}
+		m_enemy[en]->Draw();
 	}
 
 	if (bossFlag == 1) {
@@ -63,6 +60,9 @@ void C_GameScene::Update()
 	float movement = 10;
 	if (m_player) {
 		m_player->Update();
+	}
+	rep(en, enemynum) {
+		m_enemy[en]->Update();
 	}
 	/*if (playerFlag == 1) {
 		
@@ -103,58 +103,44 @@ void C_GameScene::Update()
 	//爆発アニメーション
 
 	//敵の撃破
-	rep(en, enemynum) {
-		rep(bu, mybulletnum) {
-			if (mybulletFlag[bu] != 0 && enemyFlag[en] != 0) {
-				if (IS_HIT(enemyX[en], enemyY[en], mybulletX[bu], mybulletY[bu], enemyRadius[en] + mybulletRadius[bu])) {
-					switch (mybulletFlag[bu]) {
-					case 1:
-						enemyHP[en]--;
-					}
-					mybulletFlag[bu] = 0;
-					mybulletY[bu] = 456;
-				}
-			}
-		}
+	//rep(en, enemynum) {
+	//	rep(bu, mybulletnum) {
+	//		if (mybulletFlag[bu] != 0 && enemyFlag[en] != 0) {
+	//			if (IS_HIT(enemyX[en], enemyY[en], mybulletX[bu], mybulletY[bu], enemyRadius[en] + mybulletRadius[bu])) {
+	//				switch (mybulletFlag[bu]) {
+	//				case 1:
+	//					enemyHP[en]--;
+	//				}
+	//				mybulletFlag[bu] = 0;
+	//				mybulletY[bu] = 456;
+	//			}
+	//		}
+	//	}
 
-	}
-
-	//敵の動き
-	rep(en, enemynum) {
-		if (enemyFlag[en] == 1) {
-			if (enemyTimer[en] < 60) {
-				enemyY[en] -= enemyspeedY[en];
-				enemyX[en] += enemyspeedX[en];
-				if (enemyY[en] < -392) enemyY[en] = 392;
-				if (enemyX[en] > 608) enemyX[en] = -608;
-				if (enemyX[en] < -608) enemyX[en] = 608;
-			}
-			//自機狙いを打ちたい
-		}
-	}
+	//}
 
 	//敵の復活
-	if (rand() % 100 < 2) {
-		rep(en, enemynum) {
-			if (enemyFlag[en] == 0) {
-				enemyX[en] = 608;
-				enemyY[en] = rand() % 655 - 328;
-				enemyFlag[en] = 1;
-				enemyspeedX[en] = -1;
-				enemyspeedY[en] = 0;
-				enemySize[en] = 1.0f;
-				enemyRadius[en] = 32.0f;
-				enemyTimer[en] = 0;
-				//Flagによって変えたい
-				switch (enemyFlag[en]) {
-				case 1:
-					enemyHP[en] = 3;
-					break;
-				}				
-				break;
-			}
-		}
-	}
+	//if (rand() % 100 < 2) {
+	//	rep(en, enemynum) {
+	//		if (enemyFlag[en] == 0) {
+	//			enemyX[en] = 608;
+	//			enemyY[en] = rand() % 655 - 328;
+	//			enemyFlag[en] = 1;
+	//			enemyspeedX[en] = -1;
+	//			enemyspeedY[en] = 0;
+	//			enemySize[en] = 1.0f;
+	//			enemyRadius[en] = 32.0f;
+	//			enemyTimer[en] = 0;
+	//			//Flagによって変えたい
+	//			switch (enemyFlag[en]) {
+	//			case 1:
+	//				enemyHP[en] = 3;
+	//				break;
+	//			}				
+	//			break;
+	//		}
+	//	}
+	//}
 
 
 	if (GetAsyncKeyState(VK_RETURN) & 0x8000) RESET();//関数宣言したらALT+Enterで関数定義
@@ -205,20 +191,6 @@ void C_GameScene::Update()
 		}
 	}
 
-	
-	rep(en, enemynum) {
-		if (enemyFlag[en] != 0) {
-			if (enemyHP[en] <= 0) {
-				enemyFlag[en] = 0;
-				score += 100;
-				Explosion(enemyX[en], enemyY[en]);
-			}
-			else {
-				enemyTimer[en]++;
-			}
-		}
-	}
-
 	//↓Updateの最後に行列作成↓↓
 	
 	Math::Matrix trans = Math::Matrix::CreateTranslation(bossX, (int)(bossY), 0);
@@ -239,7 +211,7 @@ void C_GameScene::Update()
 		rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(enemybulletAngle[bu]));
 		enemybulletMat[bu] = scale * rotate * trans;
 	}
-	rep(en, enemynum) enemyMat[en] = Math::Matrix::CreateTranslation(enemyX[en], enemyY[en], 0);
+	
 	rep(ex, expnum) expMat[ex] = Math::Matrix::CreateTranslation(expX[ex], expY[ex], 0);
 }
 
@@ -250,7 +222,7 @@ void C_GameScene::Init()
 	
 	backTex1.Load("Texture/back.png");
 	backTex2.Load("Texture/back.png");
-	enemyTex.Load("Texture/enemy.png");
+	
 	mybulletTex.Load("Texture/bullet.png");
 	enemybulletTex.Load("Texture/bullet.png");
 	expTex.Load("Texture/explosion.png");
@@ -265,9 +237,14 @@ void C_GameScene::Init()
 	bossAngle = 0;
 	bossTimer = 0;
 
-	m_player = new C_Player();
+	m_player = std::make_shared<C_Player>();
 	m_player->Init();
-
+	
+	rep(en,enemynum)
+	{
+		m_enemy[en] = std::make_shared<C_Enemy>();
+		m_enemy[en]->Init();
+	}
 
 	rep(bu, mybulletnum) {
 		mybulletX[bu] = 0;
@@ -297,18 +274,6 @@ void C_GameScene::Init()
 	srand(time(0));
 	rand();
 
-	rep(en, enemynum) {
-		enemyX[en] = 608;
-		enemyY[en] = rand() % 655 - 328;
-		enemyFlag[en] = 1;
-		enemyspeedX[en] = -1;
-		enemyspeedY[en] = 0;
-		enemySize[en] = 1.0f;
-		enemyRadius[en] = 32.0f;
-		//Flagによって変えたい
-		enemyHP[en] = 3;
-		enemyTimer[en] = 0;
-	}
 	//敵の初期設定
 	score = 0;
 	rep(ex, expnum) {
@@ -335,14 +300,9 @@ void C_GameScene::Release()
 void C_GameScene::RESET()
 {
 	m_player->Reset();
-	rep(en, enemynum) {
-		enemyX[en] = 608;
-		enemyY[en] = rand() % 655 - 328;
-		enemyFlag[en] = 1;
-		enemyspeedX[en] = -1;
-		enemyspeedY[en] = 0;
-		enemySize[en] = 1.0f;
-		enemyRadius[en] = 32.0f;
+	rep(en,enemynum)
+	{
+		m_enemy[en]->Reset();
 	}
 	rep(bu, mybulletnum) {
 		mybulletX[bu] = 0;

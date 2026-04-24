@@ -12,7 +12,7 @@ private:
 
 	static const int ScrWidth = 1280;
 	static const int ScrHeight = 720;
-	C_GameScene* m_GameScene;
+	std::shared_ptr<C_GameScene> m_GameScene;
 	SceneType scene;
 
 public:

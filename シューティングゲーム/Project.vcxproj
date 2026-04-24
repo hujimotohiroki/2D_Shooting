@@ -160,6 +160,7 @@
     <ClInclude Include="..\Library\tinygltf\stb_image_write.h" />
     <ClInclude Include="..\Library\tinygltf\tiny_gltf.h" />
     <ClInclude Include="Src\Application\Chara\CharaBase.h" />
+    <ClInclude Include="Src\Application\Chara\Enemy\Enemy.h" />
     <ClInclude Include="Src\Application\Chara\Player.h" />
     <ClInclude Include="Src\Application\Scene.h" />
     <ClInclude Include="Src\Application\main.h" />
@@ -188,6 +189,7 @@
     <ClCompile Include="..\Library\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="..\Library\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Src\Application\Chara\CharaBase.cpp" />
+    <ClCompile Include="Src\Application\Chara\Enemy\Enemy.cpp" />
     <ClCompile Include="Src\Application\Chara\Player.cpp" />
     <ClCompile Include="Src\Application\Scene.cpp" />
     <ClCompile Include="Src\Application\main.cpp" />

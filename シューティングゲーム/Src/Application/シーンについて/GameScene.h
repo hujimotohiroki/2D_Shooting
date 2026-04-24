@@ -2,6 +2,7 @@
 
 class Scene;
 class C_Player;
+class C_Enemy;
 
 class C_GameScene
 {
@@ -16,8 +17,10 @@ private:
 	KdTexture enemybulletTex;
 	KdTexture expTex;
 
-	C_Player* m_player = nullptr;
+	std::shared_ptr<C_Player> m_player;
 
+	static const int enemynum = 10;		//総数
+	std::shared_ptr<C_Enemy> m_enemy[enemynum];
 
 
 	//弾（自分の）の変数
@@ -45,19 +48,6 @@ private:
 	float enemybulletRadius[enemybulletnum];		//半径何ドットで描写するか
 	int enemybulletFlag[enemybulletnum];			//画面上に存在しているか
 	int enemybulletTimer[enemybulletnum];			//発射されてからの時間
-
-	//敵機の変数
-	static const int enemynum = 10;		//総数
-	Math::Matrix enemyMat[enemynum];	//座標回転拡縮を管理する行列
-	float enemyX[enemynum];				//X座標
-	float enemyY[enemynum];				//Y座標
-	int enemyspeedX[enemynum];			//X速度
-	int enemyspeedY[enemynum];			//X速度
-	float enemySize[enemynum];			//大きさの倍率
-	float enemyRadius[enemynum];		//半径何ドットで描写するか
-	int enemyFlag[enemynum];			//生存フラグ
-	int enemyTimer[enemynum];			//登場してからの時間
-	int enemyHP[enemynum];				//体力
 
 	//背景
 	Math::Matrix backMat1;

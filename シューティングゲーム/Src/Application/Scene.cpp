@@ -18,7 +18,7 @@ void Scene::Update()
 //ゲーム開始時のみ実行される
 void Scene::Init()
 {
-	m_GameScene = new C_GameScene;
+	m_GameScene = std::make_shared<C_GameScene>();
 	m_GameScene->Init();
 	scene = Title;
 }

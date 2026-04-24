@@ -164,6 +164,7 @@
     <ClInclude Include="Src\Application\Chara\Player.h" />
     <ClInclude Include="Src\Application\Scene.h" />
     <ClInclude Include="Src\Application\main.h" />
+    <ClInclude Include="Src\Application\シーンについて\BaseScene.h" />
     <ClInclude Include="Src\Application\シーンについて\GameScene.h" />
     <ClInclude Include="Src\System\Audio\KdAudio.h" />
     <ClInclude Include="src\System\Direct3D\KdDirect3D.h" />
@@ -193,6 +194,7 @@
     <ClCompile Include="Src\Application\Chara\Player.cpp" />
     <ClCompile Include="Src\Application\Scene.cpp" />
     <ClCompile Include="Src\Application\main.cpp" />
+    <ClCompile Include="Src\Application\シーンについて\BaseScene.cpp" />
     <ClCompile Include="Src\Application\シーンについて\GameScene.cpp" />
     <ClCompile Include="Src\System\Audio\KdAudio.cpp" />
     <ClCompile Include="src\System\Direct3D\KdDirect3D.cpp" />

@@ -1,10 +1,12 @@
 #pragma once
 
+#include "BaseScene.h"
+
 class Scene;
 class C_Player;
 class C_Enemy;
 
-class C_GameScene
+class C_GameScene : public C_BaseScene
 {
 private:
 

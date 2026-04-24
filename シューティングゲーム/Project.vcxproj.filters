@@ -159,6 +159,9 @@
     <ClInclude Include="Src\Application\Chara\Enemy\Enemy.h">
       <Filter>Src\Application\Chara\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\シーンについて\BaseScene.h">
+      <Filter>Src\Application\シーンについて</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -235,6 +238,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\Chara\Enemy\Enemy.cpp">
       <Filter>Src\Application\Chara\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\シーンについて\BaseScene.cpp">
+      <Filter>Src\Application\シーンについて</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

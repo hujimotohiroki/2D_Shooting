@@ -8,18 +8,18 @@
 //1秒間に60回実行される(60FPSの場合)
 void Scene::Draw2D()
 {
-	m_GameScene->Draw2D();
+	m_NowScene->Draw2D();
 }
 //1秒間に60回実行される(60FPSの場合)
 void Scene::Update()
 {
-	m_GameScene->Update();
+	m_NowScene->Update();
 }
 //ゲーム開始時のみ実行される
 void Scene::Init()
 {
-	m_GameScene = std::make_shared<C_GameScene>();
-	m_GameScene->Init();
+	m_NowScene = std::make_shared<C_GameScene>();
+	m_NowScene->Init();
 	scene = Title;
 }
 //ゲーム終了時のみ実行される

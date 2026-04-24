@@ -84,19 +84,19 @@ private:
 protected:
 	Scene* m_owner;
 public:
-
+	C_GameScene() { Init(); }
 	~C_GameScene();
 	// 初期設定
-	void Init();
+	void Init() override;
 
 	// 解放
-	void Release();
+	void Release()override;
 
 	// 更新処理
-	void Update();
+	void Update()override;
 
 	// 描画処理
-	void Draw2D();
+	void Draw2D()override;
 
 
 	void RESET();

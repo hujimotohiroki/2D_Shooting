@@ -2,6 +2,7 @@
 #include "time.h"
 #include "../Chara/Player.h"
 #include "../Chara/Enemy/Enemy.h"
+#include "SceneManager.h"
 #define rep(i,N) for(int i=0;i<N;i++)
 //プログラムを打つときは半角英数字で
 //コメントを打つ時は行の頭にスラッシュ２つ
@@ -27,7 +28,9 @@ void C_GameScene::Draw2D()
 	}
 
 	rep(en, enemynum) {
-		m_enemy[en]->Draw();
+		if(m_enemy[en]) {
+			m_enemy[en]->Draw();
+		}
 	}
 
 	if (bossFlag == 1) {
@@ -62,7 +65,9 @@ void C_GameScene::Update()
 		m_player->Update();
 	}
 	rep(en, enemynum) {
-		m_enemy[en]->Update();
+		if(m_enemy[en]){
+			m_enemy[en]->Update();
+		}
 	}
 	/*if (playerFlag == 1) {
 		

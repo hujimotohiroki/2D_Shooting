@@ -5,14 +5,12 @@
 enum SceneType {
 	Title,Game,Result,Pause,None
 };
-class C_BaseScene;
 class Scene
 {
 private:
 
 	static const int ScrWidth = 1280;
 	static const int ScrHeight = 720;
-	std::shared_ptr<C_BaseScene> m_NowScene;
 	SceneType scene;
 
 public:

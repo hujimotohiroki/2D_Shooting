@@ -102,5 +102,5 @@ public:
 
 	int IS_HIT(float aX, float aY, float bX, float bY, float l);
 
-	void SetFlag(int bu);
+	void ShotMyBullet(float playerX,float playerY);
 };

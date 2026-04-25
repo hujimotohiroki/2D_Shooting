@@ -54,7 +54,9 @@ void C_MyBullet::Reset()
 	Timer = 0;
 }
 
-void C_MyBullet::SetFlag()
+void C_MyBullet::Shot(float playerX,float playerY)
 {
+	X = playerX;
+	Y = playerY;
 	Flag = 1;
 }

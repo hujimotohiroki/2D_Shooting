@@ -44,19 +44,11 @@ void C_Player::Update()
 			Y -= MoveSpeed;
 		}
 		if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
-			m_owner->SetFlag(0);
-			/*if (Timer - PrevShot >= 10) {
-				rep(bu, num) {
-					if (m_mybullet == nullptr) {
-						Flag[bu] = 1;
-						X[bu] = X;
-						Y[bu] = Y;
-						shotWait = 10;
-						PrevShot = Timer;
-						break;
-					}
-				}
-			}*/
+			
+			if (Timer - PrevShot >= 10) {
+				m_owner->ShotMyBullet(X,Y);
+				PrevShot = Timer;
+			}
 		}
 		if (X > 608) X = 608;
 		if (X < -608)X = -608;

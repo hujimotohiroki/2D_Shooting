@@ -306,7 +306,13 @@ int C_GameScene::IS_HIT(float aX, float aY, float bX, float bY, float r)
 	else return 0;
 }
 
-void C_GameScene::SetFlag(int bu)
+void C_GameScene::ShotMyBullet(float playerX,float playerY)
 {
-	m_mybullet[bu]->SetFlag();
+	rep(bu,mybulletnum)
+	{
+		if(!m_mybullet[bu]->GetFlag()){
+			m_mybullet[bu]->Shot(playerX,playerY);
+			break;
+		}
+	}
 }

@@ -5,6 +5,7 @@ class C_BaseScene;
 class SceneManager {
 public:
 	enum SceneType {
+		Title,
 		Game
 	};
 	void PreUpdate();
@@ -23,7 +24,7 @@ private:
 
 	std::shared_ptr<C_BaseScene> m_currentScene;
 
-	SceneType m_currentSceneType = SceneType::Game;
+	SceneType m_currentSceneType = SceneType::Title;
 	SceneType m_nextSceneType = m_currentSceneType;
 private:
 	SceneManager() { Init(); }

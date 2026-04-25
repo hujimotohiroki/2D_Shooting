@@ -1,8 +1,10 @@
 #include "GameScene.h"
 #include "time.h"
-#include "../Chara/Player.h"
-#include "../Chara/Enemy/Enemy.h"
-#include "SceneManager.h"
+#include "../../Chara/Player.h"
+#include "../../Chara/Enemy/Enemy.h"
+#include "../../Chara/Boss/Boss.h"
+#include "../../Bullet/Mybullet.h"
+#include "../SceneManager.h"
 #define rep(i,N) for(int i=0;i<N;i++)
 //プログラムを打つときは半角英数字で
 //コメントを打つ時は行の頭にスラッシュ２つ
@@ -11,7 +13,6 @@ C_GameScene::~C_GameScene()
 {
 	backTex1.Release();
 	backTex2.Release();
-	mybulletTex.Release();
 	expTex.Release();
 }
 void C_GameScene::Draw2D()
@@ -24,7 +25,6 @@ void C_GameScene::Draw2D()
 
 	if (m_player) {
 		m_player->Draw();
-		
 	}
 
 	rep(en, enemynum) {
@@ -33,9 +33,8 @@ void C_GameScene::Draw2D()
 		}
 	}
 
-	if (bossFlag == 1) {
-		SHADER.m_spriteShader.SetMatrix(bossMat);
-		SHADER.m_spriteShader.DrawTex(&enemyTex, Math::Rectangle{ 0,0, 64, 64 }, 1.0f);
+	if (m_boss) {
+		m_boss->Draw();
 	}
 
 	rep(ex, expnum) {
@@ -45,9 +44,8 @@ void C_GameScene::Draw2D()
 
 
 	rep(bu, mybulletnum) {
-		if (mybulletFlag[bu]) {
-			SHADER.m_spriteShader.SetMatrix(mybulletMat[bu]);
-			SHADER.m_spriteShader.DrawTex(&mybulletTex, Math::Rectangle{ 0, 0, 16, 16 }, 1.0f);
+		if (m_mybullet[bu]) {
+			m_mybullet[bu]->Draw();
 		}
 
 	}
@@ -57,10 +55,10 @@ void C_GameScene::Draw2D()
 	SHADER.m_spriteShader.DrawString(-608, 328, text, Math::Vector4(1, 1, 0, 1));
 	if (!m_player)SHADER.m_spriteShader.DrawString(0, 0, "GAMEOVER", Math::Vector4(1, 1, 0, 1));\
 }
+
 //1秒間に60回実行される(60FPSの場合)
 void C_GameScene::Update()
 {
-	float movement = 10;
 	if (m_player) {
 		m_player->Update();
 	}
@@ -156,40 +154,17 @@ void C_GameScene::Update()
 	backY2 -= 3;
 
 	rep(bu, mybulletnum) {
-		if (mybulletX[bu] > 700) mybulletFlag[bu] = 0;
-		if (mybulletFlag[bu])mybulletX[bu] += 15;
+		if (m_mybullet[bu]) {
+			m_mybullet[bu]->Update();
+		}
 	}
-	//弾の動き
+
 
 	//ボスの処理
-	if (score >= 50 && !bossFlag) bossFlag = 1;
-	if (bossFlag == 1) {
-		bossAngle++;
-		if (bossAngle >= 360) bossAngle -= 360;
-		bossY -= 0.5f;
-		if (bossY < 0)bossY = 0;
-		rep(bu, mybulletnum) {
-			if (mybulletFlag[bu] == 1) {
-				if (IS_HIT(bossX, bossY, mybulletX[bu], mybulletY[bu], bossRadius + mybulletRadius[bu])) {
-					mybulletFlag[bu] = 0;
-					Explosion(mybulletX[bu], mybulletY[bu]);
-					bossHP--;
-					if (bossHP <= 0) {
-						bossFlag++;
-						score += 10000;
-					}
-					mybulletY[bu] = 456;
-				}
-			}
-		}
-	}
+	//if (score >= 50 && !bossFlag) bossFlag = 1;
+	m_boss->Update();
 
-	//時間経過
-	rep(bu, mybulletnum) {
-		if (mybulletFlag[bu] != 0) {
-			mybulletTimer[bu]++;
-		}
-	}
+	
 	rep(bu, enemybulletnum) {
 		if (enemybulletFlag[bu] != 0) {
 			enemybulletTimer[bu]++;
@@ -198,22 +173,13 @@ void C_GameScene::Update()
 
 	//↓Updateの最後に行列作成↓↓
 	
-	Math::Matrix trans = Math::Matrix::CreateTranslation(bossX, (int)(bossY), 0);
-	Math::Matrix scale = Math::Matrix::CreateScale(bossSize, bossSize, 0);
-	Math::Matrix rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(bossAngle));
-	bossMat = scale * rotate * trans;
+	
 	backMat1 = Math::Matrix::CreateTranslation(0, backY1, 0);
 	backMat2 = Math::Matrix::CreateTranslation(0, backY2, 0);
-	rep(bu, mybulletnum) {
-		trans = Math::Matrix::CreateTranslation(mybulletX[bu], (int)(mybulletY[bu]), 0);
-		scale = Math::Matrix::CreateScale(mybulletSize[bu], mybulletSize[bu], 0);
-		rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(mybulletAngle[bu]));
-		mybulletMat[bu] = scale * rotate * trans;
-	}
 	rep(bu, enemybulletnum) {
-		trans = Math::Matrix::CreateTranslation(enemybulletX[bu], (int)(enemybulletY[bu]), 0);
-		scale = Math::Matrix::CreateScale(enemybulletSize[bu], enemybulletSize[bu], 0);
-		rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(enemybulletAngle[bu]));
+		Math::Matrix trans = Math::Matrix::CreateTranslation(enemybulletX[bu], (int)(enemybulletY[bu]), 0);
+		Math::Matrix scale = Math::Matrix::CreateScale(enemybulletSize[bu], enemybulletSize[bu], 0);
+		Math::Matrix rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(enemybulletAngle[bu]));
 		enemybulletMat[bu] = scale * rotate * trans;
 	}
 	
@@ -227,39 +193,27 @@ void C_GameScene::Init()
 	
 	backTex1.Load("Texture/back.png");
 	backTex2.Load("Texture/back.png");
-	
-	mybulletTex.Load("Texture/bullet.png");
 	enemybulletTex.Load("Texture/bullet.png");
 	expTex.Load("Texture/explosion.png");
 	backY1 = 0;
 	backY2 = 720;
 
-	bossX = 0;
-	bossY = 456;
-	bossHP = 100;
-	bossSize = 3;
-	bossRadius = 96;
-	bossAngle = 0;
-	bossTimer = 0;
-
 	m_player = std::make_shared<C_Player>();
 	m_player->Init();
-	
+	m_player->SetOwner(this);
 	rep(en,enemynum)
 	{
 		m_enemy[en] = std::make_shared<C_Enemy>();
 		m_enemy[en]->Init();
 	}
 
+	m_boss = std::make_shared<C_Boss>();
+	m_boss->Init();
+
 	rep(bu, mybulletnum) {
-		mybulletX[bu] = 0;
-		mybulletY[bu] = 0;
-		mybulletspeedX[bu] = 0;
-		mybulletspeedY[bu] = 0;
-		mybulletSize[bu] = 1.0f;
-		mybulletRadius[bu] = 8.0f;
-		mybulletFlag[bu] = 0;
-		mybulletTimer[bu] = 0;
+		m_mybullet[bu] = std::make_shared<C_MyBullet>();
+		m_mybullet[bu]->Init();
+		m_mybullet[bu]->SetOwner(this);
 	}
 
 	rep(bu, enemybulletnum) {
@@ -295,8 +249,6 @@ void C_GameScene::Release()
 	// 画像の解放処理
 	backTex1.Release();
 	backTex2.Release();
-	enemyTex.Release();
-	mybulletTex.Release();
 	expTex.Release();
 }
 
@@ -304,18 +256,19 @@ void C_GameScene::Release()
 
 void C_GameScene::RESET()
 {
-	m_player->Reset();
+	if(m_player){
+		m_player->Reset();
+	}
 	rep(en,enemynum)
 	{
-		m_enemy[en]->Reset();
+		if(m_enemy[en]) {
+			m_enemy[en]->Reset();
+		}
 	}
 	rep(bu, mybulletnum) {
-		mybulletX[bu] = 0;
-		mybulletY[bu] = 0;
-		mybulletspeedX[bu] = 0;
-		mybulletspeedY[bu] = 0;
-		mybulletFlag[bu] = 0;
-		mybulletTimer[bu] = 0;
+		if (m_mybullet[bu]) {
+			m_mybullet[bu]->Reset();
+		}
 	}
 
 	rep(bu, enemybulletnum) {
@@ -327,10 +280,9 @@ void C_GameScene::RESET()
 		enemybulletTimer[bu] = 0;
 	}
 
-	bossFlag = 0;
-	bossX = 0;
-	bossY = 456;
-	bossHP = 100;
+	if (m_boss) {
+		m_boss->Reset();
+	}
 	
 	rep(ex, expnum)expFlag[ex] = 0;
 	score = 0;
@@ -352,4 +304,9 @@ int C_GameScene::IS_HIT(float aX, float aY, float bX, float bY, float r)
 	float c = sqrt(a * a + b * b);
 	if (c < r) return 1;
 	else return 0;
+}
+
+void C_GameScene::SetFlag(int bu)
+{
+	m_mybullet[bu]->SetFlag();
 }

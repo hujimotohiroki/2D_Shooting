@@ -1,5 +1,6 @@
 #include"Player.h"
-
+#include"../Scene/Game/GameScene.h"
+#define rep(i,N) for(int i=0;i<N;i++)
 C_Player::C_Player()
 {}
 
@@ -19,6 +20,7 @@ void C_Player::Init()
 	Radius = 32.0f;
 	HP = 100;
 	Timer = 0;
+	PrevShot = 0;
 	Tex.Load("Texture/player.png");
 }
 
@@ -41,24 +43,31 @@ void C_Player::Update()
 		if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
 			Y -= MoveSpeed;
 		}
-		/*if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
-			if (shotWait == 0) {
-				rep(bu, mybulletnum) {
-					if (mybulletFlag[bu] == 0) {
-						mybulletFlag[bu] = 1;
-						mybulletX[bu] = X;
-						mybulletY[bu] = Y;
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
+			m_owner->SetFlag(0);
+			/*if (Timer - PrevShot >= 10) {
+				rep(bu, num) {
+					if (m_mybullet == nullptr) {
+						Flag[bu] = 1;
+						X[bu] = X;
+						Y[bu] = Y;
 						shotWait = 10;
+						PrevShot = Timer;
 						break;
 					}
 				}
-			}
-		}*/
+			}*/
+		}
 		if (X > 608) X = 608;
 		if (X < -608)X = -608;
 		if (Y > 328)Y = 328;
 		if (Y < -328)Y = -328;
 	}
+	if (HP <= 0) {
+		Flag = 0;
+
+	}
+	Timer++;
 	Math::Matrix trans = Math::Matrix::CreateTranslation(X, (int)(Y), 0);
 	Math::Matrix scale = Math::Matrix::CreateScale(Size, Size, 0);
 	Math::Matrix rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(270));

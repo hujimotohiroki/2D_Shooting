@@ -2,16 +2,12 @@
 
 //#include "SceneChange.h"
 
-enum SceneType {
-	Title,Game,Result,Pause,None
-};
 class Scene
 {
 private:
 
 	static const int ScrWidth = 1280;
 	static const int ScrHeight = 720;
-	SceneType scene;
 
 public:
 

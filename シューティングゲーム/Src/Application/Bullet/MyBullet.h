@@ -1,23 +1,19 @@
 #pragma once
-#include "CharaBase.h"
-class C_CharaBase;
-
+#include "BulletBase.h"
+class C_BulletBase;
 class C_GameScene;
-
-class C_Player : public C_CharaBase  {
+class C_MyBullet :public C_BulletBase {
 private:
 	C_GameScene* m_owner;
 	void Release();
-	float mp;
-	int PrevShot;
 public:
 
-	C_Player();
-	~C_Player();
+	C_MyBullet();
+	~C_MyBullet();
 	void Init();
 	void Update();
 	void Draw();
 	void Reset();
-
+	void SetFlag();
 	void SetOwner(C_GameScene* owner) { m_owner = owner; }
 };

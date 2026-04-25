@@ -1,10 +1,12 @@
 #pragma once
 
-#include "BaseScene.h"
+#include "../BaseScene.h"
 
 class Scene;
 class C_Player;
 class C_Enemy;
+class C_Boss;
+class C_MyBullet;
 
 class C_GameScene : public C_BaseScene
 {
@@ -24,19 +26,14 @@ private:
 	static const int enemynum = 10;		//総数
 	std::shared_ptr<C_Enemy> m_enemy[enemynum];
 
+	std::shared_ptr<C_Boss> m_boss;
+
 
 	//弾（自分の）の変数
 	static const int mybulletnum = 30;	//最大表示数
-	Math::Matrix mybulletMat[mybulletnum];	//座標回転拡縮を管理する行列
-	float mybulletX[mybulletnum];			//X座標
-	float mybulletY[mybulletnum];			//Y座標
-	float mybulletspeedX[mybulletnum];		//X速度
-	float mybulletspeedY[mybulletnum];		//Y速度
-	float mybulletSize[mybulletnum];		//大きさの倍率
-	float mybulletRadius[mybulletnum];		//半径何ドットで描写するか
-	float mybulletAngle[mybulletnum];		//角度
-	int mybulletFlag[mybulletnum];			//画面上に存在しているか
-	int mybulletTimer[mybulletnum];			//発射されてからの時間
+	std::shared_ptr<C_MyBullet> m_mybullet[mybulletnum];
+
+
 
 	//弾（敵機の）の変数
 	static const int enemybulletnum = 100;	//最大表示数
@@ -105,4 +102,5 @@ public:
 
 	int IS_HIT(float aX, float aY, float bX, float bY, float l);
 
+	void SetFlag(int bu);
 };

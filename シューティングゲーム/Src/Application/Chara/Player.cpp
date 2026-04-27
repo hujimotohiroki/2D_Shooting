@@ -1,5 +1,6 @@
 #include"Player.h"
 #include"../Scene/Game/GameScene.h"
+#include"../Bullet/MyBullet.h"
 #define rep(i,N) for(int i=0;i<N;i++)
 C_Player::C_Player()
 {}
@@ -46,7 +47,16 @@ void C_Player::Update()
 		if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
 			
 			if (Timer - PrevShot >= 10) {
-				m_owner->ShotMyBullet(X,Y);
+				int bu = 0;
+				do {
+					mybullet = m_owner->GetMyBullet(bu);
+					if (!mybullet)break;
+					bu++;
+				} while (mybullet->GetFlag());
+				if(mybullet)
+				{
+					mybullet->Shot(X, Y, Flag);
+				}
 				PrevShot = Timer;
 			}
 		}

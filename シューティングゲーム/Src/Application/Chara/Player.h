@@ -1,15 +1,15 @@
 #pragma once
 #include "CharaBase.h"
 class C_CharaBase;
+class C_MyBullet;
 
-class C_GameScene;
 
 class C_Player : public C_CharaBase  {
 private:
-	C_GameScene* m_owner;
+	std::shared_ptr<C_MyBullet> mybullet;
 	void Release();
 	float mp;
-	int PrevShot;
+	
 public:
 
 	C_Player();
@@ -19,5 +19,5 @@ public:
 	void Draw();
 	void Reset();
 
-	void SetOwner(C_GameScene* owner) { m_owner = owner; }
+	
 };

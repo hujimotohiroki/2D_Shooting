@@ -4,6 +4,8 @@
 #include "../../Chara/Enemy/Enemy.h"
 #include "../../Chara/Boss/Boss.h"
 #include "../../Bullet/Mybullet.h"
+#include "../../Bullet/Enemybullet.h"
+#include "GameScene/Hit.h"
 #include "../SceneManager.h"
 #define rep(i,N) for(int i=0;i<N;i++)
 //プログラムを打つときは半角英数字で
@@ -46,6 +48,12 @@ void C_GameScene::Draw2D()
 	rep(bu, mybulletnum) {
 		if (m_mybullet[bu]) {
 			m_mybullet[bu]->Draw();
+		}
+	}
+
+	rep(bu, enemybulletnum) {
+		if (m_enemybullet[bu]) {
+			m_enemybullet[bu]->Draw();
 		}
 
 	}
@@ -158,6 +166,11 @@ void C_GameScene::Update()
 			m_mybullet[bu]->Update();
 		}
 	}
+	rep(bu, enemybulletnum) {
+		if (m_enemybullet[bu]) {
+			m_enemybullet[bu]->Update();
+		}
+	}
 
 
 	//ボスの処理
@@ -165,23 +178,18 @@ void C_GameScene::Update()
 	m_boss->Update();
 
 	
-	rep(bu, enemybulletnum) {
+	/*rep(bu, enemybulletnum) {
 		if (enemybulletFlag[bu] != 0) {
 			enemybulletTimer[bu]++;
 		}
-	}
-
+	}*/
+	m_hit->Update();
 	//↓Updateの最後に行列作成↓↓
 	
 	
 	backMat1 = Math::Matrix::CreateTranslation(0, backY1, 0);
 	backMat2 = Math::Matrix::CreateTranslation(0, backY2, 0);
-	rep(bu, enemybulletnum) {
-		Math::Matrix trans = Math::Matrix::CreateTranslation(enemybulletX[bu], (int)(enemybulletY[bu]), 0);
-		Math::Matrix scale = Math::Matrix::CreateScale(enemybulletSize[bu], enemybulletSize[bu], 0);
-		Math::Matrix rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(enemybulletAngle[bu]));
-		enemybulletMat[bu] = scale * rotate * trans;
-	}
+	
 	
 	rep(ex, expnum) expMat[ex] = Math::Matrix::CreateTranslation(expX[ex], expY[ex], 0);
 }
@@ -205,10 +213,12 @@ void C_GameScene::Init()
 	{
 		m_enemy[en] = std::make_shared<C_Enemy>();
 		m_enemy[en]->Init();
+		m_enemy[en]->SetOwner(this);
 	}
 
 	m_boss = std::make_shared<C_Boss>();
 	m_boss->Init();
+	m_boss->SetOwner(this);
 
 	rep(bu, mybulletnum) {
 		m_mybullet[bu] = std::make_shared<C_MyBullet>();
@@ -217,15 +227,13 @@ void C_GameScene::Init()
 	}
 
 	rep(bu, enemybulletnum) {
-		enemybulletX[bu] = 0;
-		enemybulletY[bu] = 0;
-		enemybulletspeedX[bu] = 0;
-		enemybulletspeedY[bu] = 0;
-		enemybulletSize[bu] = 1.0f;
-		enemybulletRadius[bu] = 8.0f;
-		enemybulletFlag[bu] = 0;
-		enemybulletTimer[bu] = 0;
+		m_enemybullet[bu] = std::make_shared<C_EnemyBullet>();
+		m_enemybullet[bu]->Init();
+		m_enemybullet[bu]->SetOwner(this);
 	}
+
+	m_hit = std::make_shared<C_Hit>();
+	m_hit->SetOwner(this);
 
 	bucount = 0;
 	shotWait = 0;
@@ -272,12 +280,9 @@ void C_GameScene::RESET()
 	}
 
 	rep(bu, enemybulletnum) {
-		enemybulletX[bu] = 0;
-		enemybulletY[bu] = 0;
-		enemybulletspeedX[bu] = 0;
-		enemybulletspeedY[bu] = 0;
-		enemybulletFlag[bu] = 0;
-		enemybulletTimer[bu] = 0;
+		if (m_enemybullet[bu]) {
+			m_enemybullet[bu]->Reset();
+		}
 	}
 
 	if (m_boss) {
@@ -306,13 +311,33 @@ int C_GameScene::IS_HIT(float aX, float aY, float bX, float bY, float r)
 	else return 0;
 }
 
-void C_GameScene::ShotMyBullet(float playerX,float playerY)
+
+std::shared_ptr<C_Player> C_GameScene::GetPlayer()
 {
-	rep(bu,mybulletnum)
-	{
-		if(!m_mybullet[bu]->GetFlag()){
-			m_mybullet[bu]->Shot(playerX,playerY);
-			break;
-		}
-	}
+	return m_player;
 }
+
+std::shared_ptr<C_Enemy> C_GameScene::GetEnemy(int en)
+{
+	if (en < enemynum) {
+		return m_enemy[en];
+	}
+	return nullptr;
+}
+
+std::shared_ptr<C_MyBullet> C_GameScene::GetMyBullet(int bu)
+{
+	if (bu < mybulletnum) {
+		return m_mybullet[bu];
+	}
+	return nullptr;
+}
+
+std::shared_ptr<C_EnemyBullet> C_GameScene::GetEnemyBullet(int bu)
+{
+	if (bu < enemybulletnum) {
+		return m_enemybullet[bu];
+	}
+	return nullptr;
+}
+

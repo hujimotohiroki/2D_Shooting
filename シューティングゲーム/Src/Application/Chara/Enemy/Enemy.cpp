@@ -1,4 +1,6 @@
 #include "Enemy.h"
+#include"../../Scene/Game/GameScene.h"
+#include"../../Bullet/EnemyBullet.h"
 
 void C_Enemy::Release()
 {}
@@ -21,6 +23,7 @@ void C_Enemy::Init()
 	//Flagによって変えたい
 	HP = 3;
 	Timer = 0;
+	PrevShot = 0;
 	Tex.Load("Texture/enemy.png");
 }
 
@@ -33,6 +36,21 @@ void C_Enemy::Update()
 			if (Y < -392) Y = 392;
 			if (X > 608) X = -608;
 			if (X < -608) X = 608;
+		}
+		if (Timer > 60 && Timer - PrevShot >= 10) {
+			if (Timer - PrevShot >= 10) {
+				int bu = 0;
+				do {
+					enemybullet = m_owner->GetEnemyBullet(bu);
+					if (!enemybullet)break;
+					bu++;
+				} while (enemybullet->GetFlag());
+				if (enemybullet)
+				{
+					enemybullet->Shot(X, Y, Flag);
+				}
+				PrevShot = Timer;
+			}
 		}
 		//自機狙いを打ちたい
 	}
@@ -66,4 +84,5 @@ void C_Enemy::Reset()
 	SpeedY = 0;
 	Size = 1.0f;
 	Radius = 32.0f;
+	Timer = 0;
 }

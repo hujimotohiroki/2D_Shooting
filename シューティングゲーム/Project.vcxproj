@@ -160,6 +160,7 @@
     <ClInclude Include="..\Library\tinygltf\stb_image_write.h" />
     <ClInclude Include="..\Library\tinygltf\tiny_gltf.h" />
     <ClInclude Include="Src\Application\Bullet\BulletBase.h" />
+    <ClInclude Include="Src\Application\Bullet\EnemyBullet.h" />
     <ClInclude Include="Src\Application\Bullet\MyBullet.h" />
     <ClInclude Include="Src\Application\Chara\Boss\Boss.h" />
     <ClInclude Include="Src\Application\Chara\CharaBase.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="Src\Application\main.h" />
     <ClInclude Include="Src\Application\Scene\BaseScene.h" />
     <ClInclude Include="Src\Application\Scene\Game\GameScene.h" />
+    <ClInclude Include="Src\Application\Scene\Game\GameScene\Hit.h" />
     <ClInclude Include="Src\Application\Scene\SceneManager.h" />
     <ClInclude Include="Src\Application\Scene\Title\TitleScene.h" />
     <ClInclude Include="Src\System\Audio\KdAudio.h" />
@@ -195,6 +197,7 @@
     <ClCompile Include="..\Library\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="..\Library\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Src\Application\Bullet\BulletBase.cpp" />
+    <ClCompile Include="Src\Application\Bullet\EnemyBullet.cpp" />
     <ClCompile Include="Src\Application\Bullet\MyBullet.cpp" />
     <ClCompile Include="Src\Application\Chara\Boss\Boss.cpp" />
     <ClCompile Include="Src\Application\Chara\CharaBase.cpp" />
@@ -204,6 +207,7 @@
     <ClCompile Include="Src\Application\main.cpp" />
     <ClCompile Include="Src\Application\Scene\BaseScene.cpp" />
     <ClCompile Include="Src\Application\Scene\Game\GameScene.cpp" />
+    <ClCompile Include="Src\Application\Scene\Game\GameScene\Hit.cpp" />
     <ClCompile Include="Src\Application\Scene\SceneManager.cpp" />
     <ClCompile Include="Src\Application\Scene\Title\TitleScene.cpp" />
     <ClCompile Include="Src\System\Audio\KdAudio.cpp" />

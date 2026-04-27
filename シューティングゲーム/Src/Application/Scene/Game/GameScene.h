@@ -7,6 +7,8 @@ class C_Player;
 class C_Enemy;
 class C_Boss;
 class C_MyBullet;
+class C_EnemyBullet;
+class C_Hit;
 
 class C_GameScene : public C_BaseScene
 {
@@ -36,17 +38,10 @@ private:
 
 
 	//弾（敵機の）の変数
-	static const int enemybulletnum = 100;	//最大表示数
-	Math::Matrix enemybulletMat[enemybulletnum];	//座標回転拡縮を管理する行列
-	float enemybulletX[enemybulletnum];				//X座標
-	float enemybulletY[enemybulletnum];				//Y座標
-	float enemybulletspeedX[enemybulletnum];		//X速度
-	float enemybulletspeedY[enemybulletnum];		//Y速度
-	float enemybulletSize[enemybulletnum];			//大きさの倍率
-	float enemybulletAngle[enemybulletnum];			//角度
-	float enemybulletRadius[enemybulletnum];		//半径何ドットで描写するか
-	int enemybulletFlag[enemybulletnum];			//画面上に存在しているか
-	int enemybulletTimer[enemybulletnum];			//発射されてからの時間
+	static const int enemybulletnum = 1000;	//最大表示数
+	std::shared_ptr<C_EnemyBullet> m_enemybullet[enemybulletnum];
+	
+	std::shared_ptr<C_Hit>m_hit;
 
 	//背景
 	Math::Matrix backMat1;
@@ -102,5 +97,8 @@ public:
 
 	int IS_HIT(float aX, float aY, float bX, float bY, float l);
 
-	void ShotMyBullet(float playerX,float playerY);
+	std::shared_ptr<C_Player> GetPlayer();
+	std::shared_ptr<C_Enemy> GetEnemy(int en);
+	std::shared_ptr<C_MyBullet> GetMyBullet(int bu);
+	std::shared_ptr<C_EnemyBullet> GetEnemyBullet(int bu);
 };

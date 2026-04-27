@@ -1,7 +1,6 @@
 #pragma once
 #include"../CharaBase.h"
 class C_CharaBase;
-
 class C_Boss :public C_CharaBase {
 private:
 	void Release();

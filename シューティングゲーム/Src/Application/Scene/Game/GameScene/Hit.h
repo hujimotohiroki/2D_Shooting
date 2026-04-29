@@ -2,13 +2,18 @@
 
 class C_GameScene;
 class C_Player;
+class C_MyBullet;
+class C_Enemy;
 class C_EnemyBullet;
 
 class C_Hit {
 private:
 	C_GameScene* m_owner;
 	std::shared_ptr<C_Player> m_player;
+	std::shared_ptr<C_MyBullet> m_mybullet;
+	std::shared_ptr<C_Enemy> m_enemy;
 	std::shared_ptr<C_EnemyBullet> m_enemybullet;
+	
 public:
 	C_Hit();
 	~C_Hit() ;

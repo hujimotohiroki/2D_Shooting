@@ -15,4 +15,7 @@ public:
 	void Update();
 	void Draw();
 	void Reset();
+
+	void Hit(int damage);
+	void Dead();
 };

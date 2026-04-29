@@ -21,7 +21,7 @@ void C_Enemy::Init()
 	HitRadius = 5.0f;
 	HitDiff = { 0,0 };
 	//Flagによって変えたい
-	HP = 3;
+	HP = 5;
 	Timer = 0;
 	PrevShot = 0;
 	Tex.Load("Texture/enemy.png");
@@ -82,4 +82,17 @@ void C_Enemy::Reset()
 	Size = 1.0f;
 	Radius = 32.0f;
 	Timer = 0;
+}
+
+void C_Enemy::Hit(int damage)
+{
+	HP -= damage;
+	if (HP <= 0) {
+		Dead();
+	}
+}
+
+void C_Enemy::Dead()
+{
+	Flag = 0;
 }

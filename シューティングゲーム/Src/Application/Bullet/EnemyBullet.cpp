@@ -54,3 +54,8 @@ void C_EnemyBullet::Reset()
 	Flag = 0;
 	Timer = 0;
 }
+
+void C_EnemyBullet::Hit()
+{
+	Flag = 0;
+}

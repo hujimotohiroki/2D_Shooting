@@ -52,4 +52,9 @@ void C_MyBullet::Reset()
 	Timer = 0;
 }
 
+void C_MyBullet::Hit()
+{
+	Flag = 0;
+}
+
 

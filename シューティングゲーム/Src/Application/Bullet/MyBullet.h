@@ -15,5 +15,6 @@ public:
 	void Draw();
 	void Reset();
 
+	void Hit();
 	void SetOwner(C_GameScene* owner) { m_owner = owner; }
 };

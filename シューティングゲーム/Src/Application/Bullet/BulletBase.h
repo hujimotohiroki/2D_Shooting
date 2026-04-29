@@ -26,7 +26,7 @@ public:
 	int GetFlag() { return Flag; }
 	Math::Vector2 GetPos() { return Pos; }
 	float GetHitRadius() { return HitRadius; }
-	void Hit() { Flag = 0; }
+	
 private:
 	void Release();
 };

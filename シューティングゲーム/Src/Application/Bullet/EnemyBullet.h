@@ -15,7 +15,5 @@ public:
 	void Draw();
 	void Reset();
 
-	int GetFlag() { return Flag; }
-	void Shot(float enemyX, float enemyY,int flag);
 	void SetOwner(C_GameScene* owner) { m_owner = owner; }
 };

@@ -10,16 +10,16 @@ C_Player::~C_Player()
 
 void C_Player::Init()
 {
-	X = 0;
-	Y = -392;
+	Pos = { 0,-392 };
 	MoveSpeed = 10.0f;
-	SpeedX = 0;
-	SpeedY = 0;
+	Speed = { 0,0 };
 	Flag = 1;
 	Anim = 0;
 	Size = 1.0f;
 	Radius = 32.0f;
-	HP = 100;
+	HitRadius = 5.0f;
+	HitDiff = { 0,0 };
+	HP = 10;
 	Timer = 0;
 	PrevShot = 0;
 	Tex.Load("Texture/player.png");
@@ -27,50 +27,46 @@ void C_Player::Init()
 
 void C_Player::Update()
 {
-	if(Flag!=0){
+	if(Flag){
 		MoveSpeed = 10.0f;
 		if (GetAsyncKeyState(VK_SHIFT) & 0x8000) {
 			MoveSpeed = 5.0f;
 		}
 		if (GetAsyncKeyState(VK_RIGHT) & 0x8000) {
-			X += MoveSpeed;
+			Pos.x += MoveSpeed;
 		}
 		if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
-			X -= MoveSpeed;
+			Pos.x -= MoveSpeed;
 		}
 		if (GetAsyncKeyState(VK_UP) & 0x8000) {
-			Y += MoveSpeed;
+			Pos.y += MoveSpeed;
 		}
 		if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
-			Y -= MoveSpeed;
+			Pos.y -= MoveSpeed;
 		}
 		if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
 			
 			if (Timer - PrevShot >= 10) {
 				int bu = 0;
 				do {
-					mybullet = m_owner->GetMyBullet(bu);
-					if (!mybullet)break;
+					m_mybullet = m_owner->GetMyBullet(bu);
+					if (!m_mybullet)break;
 					bu++;
-				} while (mybullet->GetFlag());
-				if(mybullet)
+				} while (m_mybullet->GetFlag());
+				if(m_mybullet)
 				{
-					mybullet->Shot(X, Y, Flag);
+					m_mybullet->Shot(Pos, Flag);
 				}
 				PrevShot = Timer;
 			}
 		}
-		if (X > 608) X = 608;
-		if (X < -608)X = -608;
-		if (Y > 328)Y = 328;
-		if (Y < -328)Y = -328;
-	}
-	if (HP <= 0) {
-		Flag = 0;
-
+		if (Pos.x > 608) Pos.x = 608;
+		if (Pos.x < -608)Pos.x = -608;
+		if (Pos.y > 328)Pos.y = 328;
+		if (Pos.y < -328)Pos.y = -328;
 	}
 	Timer++;
-	Math::Matrix trans = Math::Matrix::CreateTranslation(X, (int)(Y), 0);
+	Math::Matrix trans = Math::Matrix::CreateTranslation(Pos.x, (int)(Pos.y), 0);
 	Math::Matrix scale = Math::Matrix::CreateScale(Size, Size, 0);
 	Math::Matrix rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(270));
 	Mat = scale * rotate * trans;
@@ -78,13 +74,28 @@ void C_Player::Update()
 
 void C_Player::Draw()
 {
-	SHADER.m_spriteShader.SetMatrix(Mat);
-	SHADER.m_spriteShader.DrawTex(&Tex, Math::Rectangle{ (int)(Anim) * 64,0, 64, 64 }, 1.0f);
+	if(Flag){
+		SHADER.m_spriteShader.SetMatrix(Mat);
+		SHADER.m_spriteShader.DrawTex(&Tex, Math::Rectangle{ (int)(Anim) * 64,0, 64, 64 }, 1.0f);
+	}
 }
 
 void C_Player::Reset()
 {
 	Flag = 1;
-	X = 0;
-	Y = -200;
+	Pos.x = 0;
+	Pos.y = -200;
+}
+
+void C_Player::Hit(int damage)
+{
+	HP -= damage;
+	if (HP <= 0) {
+		Dead();
+	}
+}
+
+void C_Player::Dead()
+{
+	Flag = 0;
 }

@@ -6,7 +6,7 @@ class C_MyBullet;
 
 class C_Player : public C_CharaBase  {
 private:
-	std::shared_ptr<C_MyBullet> mybullet;
+	std::shared_ptr<C_MyBullet> m_mybullet;
 	void Release();
 	float mp;
 	
@@ -19,5 +19,7 @@ public:
 	void Draw();
 	void Reset();
 
+	void Hit(int damage);
+	void Dead();
 	
 };

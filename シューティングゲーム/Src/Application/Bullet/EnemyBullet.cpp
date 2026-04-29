@@ -11,12 +11,14 @@ C_EnemyBullet::~C_EnemyBullet()
 
 void C_EnemyBullet::Init()
 {
-	X = 0;
-	Y = 0;
-	SpeedX = 0;
-	SpeedY = 0;
+	Pos.x = 0;
+	Pos.y = 0;
+	Speed.x = 0;
+	Speed.y = 0;
 	Size = 1.0f;
 	Radius = 8.0f;
+	HitRadius = 8.0f;
+	HitDiff = { 0,0 };
 	Flag = 0;
 	Timer = 0;
 	Angle = 0;
@@ -26,10 +28,10 @@ void C_EnemyBullet::Init()
 void C_EnemyBullet::Update()
 {
 	if (Flag) {
-		X -= 15;
+		Pos.x -= 15;
 		Timer++;
-		if (abs(X) > 700) Flag = 0;
-		Math::Matrix trans = Math::Matrix::CreateTranslation(X, (int)(Y), 0);
+		if (abs(Pos.x) > 700) Flag = 0;
+		Math::Matrix trans = Math::Matrix::CreateTranslation(Pos.x, (int)(Pos.y), 0);
 		Math::Matrix scale = Math::Matrix::CreateScale(Size, Size, 0);
 		Math::Matrix rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(Angle));
 		Mat = scale * rotate * trans;
@@ -46,17 +48,9 @@ void C_EnemyBullet::Draw()
 
 void C_EnemyBullet::Reset()
 {
-	X = 0;
-	Y = 0;
-	SpeedX = 0;
-	SpeedY = 0;
+	Pos = { 0,0 };
+	Speed.x = 0;
+	Speed.y = 0;
 	Flag = 0;
 	Timer = 0;
-}
-
-void C_EnemyBullet::Shot(float enemyX, float enemyY,int flag)
-{
-	X = enemyX;
-	Y = enemyY;
-	Flag = flag;
 }

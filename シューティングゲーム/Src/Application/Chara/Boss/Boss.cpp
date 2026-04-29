@@ -11,8 +11,8 @@ C_Boss::~C_Boss()
 
 void C_Boss::Init()
 {
-	X = 0;
-	Y = 456;
+	Pos.x = 0;
+	Pos.y = 456;
 	HP = 100;
 	Size = 3;	
 	Radius = 96;
@@ -26,24 +26,24 @@ void C_Boss::Update()
 	if (Flag == 1) {
 		//Angle++;
 		//if (Angle >= 360) Angle -= 360;
-		Y -= 0.5f;
-		if (Y < 0)Y = 0;
+		Pos.y -= 0.5f;
+		if (Pos.y < 0)Pos.y = 0;
 		//rep(bu, mybulletnum) {
 		//	if (mybulletFlag[bu] == 1) {
-		//		if (IS_HIT(X, Y, mybulletX[bu], mybulletY[bu], Radius + mybulletRadius[bu])) {
+		//		if (IS_HIT(Pos.x, Pos.y, mybulletPos.x[bu], mybulletPos.y[bu], Radius + mybulletRadius[bu])) {
 		//			mybulletFlag[bu] = 0;
-		//			Explosion(mybulletX[bu], mybulletY[bu]);
+		//			Explosion(mybulletPos.x[bu], mybulletPos.y[bu]);
 		//			HP--;
 		//			if (HP <= 0) {
 		//				Flag++;
 		//				score += 10000;
 		//			}
-		//			mybulletY[bu] = 456;
+		//			mybulletPos.y[bu] = 456;
 		//		}
 		//	}
 		//}
 	}
-	Math::Matrix trans = Math::Matrix::CreateTranslation(X, (int)(Y), 0);
+	Math::Matrix trans = Math::Matrix::CreateTranslation(Pos.x, (int)(Pos.y), 0);
 	Math::Matrix scale = Math::Matrix::CreateScale(Size, Size, 0);
 	Math::Matrix rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(0));
 	Mat = scale * rotate * trans;
@@ -58,7 +58,7 @@ void C_Boss::Draw()
 void C_Boss::Reset()
 {
 	Flag = 0;
-	X = 0;
-	Y = 456;
+	Pos.x = 0;
+	Pos.y = 456;
 	HP = 100;
 }

@@ -5,7 +5,7 @@ class C_EnemyBullet;
 
 class C_Enemy :public C_CharaBase {
 private:
-	std::shared_ptr<C_EnemyBullet> enemybullet;
+	std::shared_ptr<C_EnemyBullet> m_enemybullet;
 	void Release();
 public:
 

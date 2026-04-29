@@ -174,9 +174,6 @@
     <ClInclude Include="Src\Application\Chara\Boss\Boss.h">
       <Filter>Src\Application\Chara\Boss</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\Bullet\MyBullet.h">
-      <Filter>Src\Application\Bullet</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\Bullet\BulletBase.h">
       <Filter>Src\Application\Bullet</Filter>
     </ClInclude>
@@ -197,6 +194,9 @@
     </ClInclude>
     <ClInclude Include="Src\Application\Scene\Game\GameScene\Hit.h">
       <Filter>Src\Application\Scene\Game\GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Bullet\MyBullet.h">
+      <Filter>Src\Application\Bullet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

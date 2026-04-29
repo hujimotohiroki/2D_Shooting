@@ -13,13 +13,13 @@ C_Enemy::~C_Enemy()
 
 void C_Enemy::Init()
 {
-	X = 608;
-	Y = rand() % 655 - 328;
+	Pos = { 608, (float)(rand() % 655 - 328) };
 	Flag = 1;
-	SpeedX = -1;
-	SpeedY = 0;
+	Speed = {-1, 0};
 	Size = 1.0f;
 	Radius = 32.0f;
+	HitRadius = 5.0f;
+	HitDiff = { 0,0 };
 	//Flagによって変えたい
 	HP = 3;
 	Timer = 0;
@@ -31,23 +31,22 @@ void C_Enemy::Update()
 {
 	if (Flag == 1) {
 		if (Timer < 60) {
-			Y -= SpeedY;
-			X += SpeedX;
-			if (Y < -392) Y = 392;
-			if (X > 608) X = -608;
-			if (X < -608) X = 608;
+			Pos += Speed;
+			if (Pos.y < -392) Pos.y = 392;
+			if (Pos.x > 608) Pos.x = -608;
+			if (Pos.x < -608) Pos.x = 608;
 		}
 		if (Timer > 60 && Timer - PrevShot >= 10) {
 			if (Timer - PrevShot >= 10) {
 				int bu = 0;
 				do {
-					enemybullet = m_owner->GetEnemyBullet(bu);
-					if (!enemybullet)break;
+					m_enemybullet = m_owner->GetEnemyBullet(bu);
+					if (!m_enemybullet)break;
 					bu++;
-				} while (enemybullet->GetFlag());
-				if (enemybullet)
+				} while (m_enemybullet->GetFlag());
+				if (m_enemybullet)
 				{
-					enemybullet->Shot(X, Y, Flag);
+					m_enemybullet->Shot(Pos, Flag);
 				}
 				PrevShot = Timer;
 			}
@@ -58,13 +57,13 @@ void C_Enemy::Update()
 		if (HP <= 0) {
 			Flag = 0;
 			//score += 100;
-			//Explosion(X, Y);
+			//Explosion(Pos.x, Pos.y);
 		}
 		else {
 			Timer++;
 		}
 	}
-	Mat = Math::Matrix::CreateTranslation(X, Y, 0);
+	Mat = Math::Matrix::CreateTranslation(Pos.x, Pos.y, 0);
 }
 
 void C_Enemy::Draw()
@@ -77,11 +76,9 @@ void C_Enemy::Draw()
 
 void C_Enemy::Reset()
 {
-	X = 608;
-	Y = rand() % 655 - 328;
+	Pos = { 608, (float)(rand() % 655 - 328) };
 	Flag = 1;
-	SpeedX = -1;
-	SpeedY = 0;
+	Speed = { -1,0 };
 	Size = 1.0f;
 	Radius = 32.0f;
 	Timer = 0;

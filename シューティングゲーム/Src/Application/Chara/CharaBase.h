@@ -5,15 +5,15 @@ class C_GameScene;
 class C_CharaBase {
 protected:
 	Math::Matrix Mat;
-	float X;
-	float Y;
+	Math::Vector2 Pos;
 	float MoveSpeed;
-	float SpeedX;
-	float SpeedY;
-	float Size;			//元画像を何倍にするか
-	float Radius;		//正確なサイズ（半径）
-	int Flag;			//種類
-	int Anim;			//描画状態
+	Math::Vector2 Speed;
+	float Size;				//元画像を何倍にするか
+	float Radius;			//正確なサイズ（半径）
+	float HitRadius;		//当たり判定(半径)
+	Math::Vector2 HitDiff;	//中心のずれ
+	int Flag;				//種類
+	int Anim;				//描画状態
 	int Timer;
 	int PrevShot;
 	int HP;
@@ -26,6 +26,9 @@ public:
 	void Update();
 	void Draw();
 
+	bool GetFlag() { return Flag; }
+	Math::Vector2 GetPos() { return Pos; }
+	float GetHitRadius() { return HitRadius; }
 	void SetOwner(C_GameScene* owner) { m_owner = owner; }
 private:
 	void Release();

@@ -3,6 +3,32 @@
 class C_GameScene;
 
 class C_ObjectBase {
+
+public:
+	enum class ObjectType {
+		None,
+		Player,
+		Enemy,
+		Boss,
+		MyBullet,
+		EnemyBullet,
+		Mp
+	};
+
+	C_ObjectBase();
+	virtual ~C_ObjectBase() { Release(); }
+	virtual void Init();
+	virtual void Update();
+	virtual void Draw();
+
+	virtual void Reset();
+
+	int GetFlag() { return Flag; }
+	void SetFlag(int flag) { Flag = flag; }
+	Math::Vector2 GetPos() { return Pos; }
+	void SetPos(Math::Vector2 pos) { Pos = pos; }
+	float GetHitRadius() { return HitRadius; }
+	void SetOwner(C_GameScene* owner) { m_owner = owner; }
 protected:
 	Math::Matrix Mat;
 	Math::Vector2 Pos;
@@ -20,19 +46,7 @@ protected:
 	float Angle;
 	KdTexture Tex;
 	C_GameScene* m_owner;
-public:
-	C_ObjectBase();
-	~C_ObjectBase() { Release(); }
-	void Init();
-	void Update();
-	void Draw();
-
-	
-	int GetFlag() { return Flag; }
-	void SetFlag(int flag) { Flag = flag; }
-	Math::Vector2 GetPos() { return Pos; }
-	float GetHitRadius() { return HitRadius; }
-	void SetOwner(C_GameScene* owner) { m_owner = owner; }
+	ObjectType m_objType= ObjectType::None;
 private:
-	void Release();
+	virtual void Release();
 };

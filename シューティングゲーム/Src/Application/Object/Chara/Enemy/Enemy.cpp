@@ -25,6 +25,7 @@ void C_Enemy::Init()
 	Timer = 0;
 	PrevShot = 0;
 	Tex.Load("Texture/enemy.png");
+	m_objType = ObjectType::Enemy;
 }
 
 void C_Enemy::Update()
@@ -38,16 +39,7 @@ void C_Enemy::Update()
 		}
 		if (Timer > 60 && Timer - PrevShot >= 10) {
 			if (Timer - PrevShot >= 10) {
-				int bu = 0;
-				do {
-					m_enemybullet = m_owner->GetEnemyBullet(bu);
-					if (!m_enemybullet)break;
-					bu++;
-				} while (m_enemybullet->GetFlag());
-				if (m_enemybullet)
-				{
-					m_enemybullet->Shot(Pos, Flag);
-				}
+				m_owner->EnemyShot(Pos,Flag);
 				PrevShot = Timer;
 			}
 		}

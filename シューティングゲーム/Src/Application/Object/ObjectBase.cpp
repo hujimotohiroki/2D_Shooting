@@ -12,5 +12,8 @@ void C_ObjectBase::Update()
 void C_ObjectBase::Draw()
 {}
 
+void C_ObjectBase::Reset()
+{}
+
 void C_ObjectBase::Release()
 {}

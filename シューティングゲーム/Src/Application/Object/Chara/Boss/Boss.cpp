@@ -17,8 +17,9 @@ void C_Boss::Init()
 	Size = 3;	
 	Radius = 96;
 	Timer = 0;
-	Flag = 0;
+	Flag = 1;
 	Tex.Load("Texture/enemy.png");
+	m_objType = ObjectType::Boss;
 }
 
 void C_Boss::Update()

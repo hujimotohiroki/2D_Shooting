@@ -2,6 +2,8 @@
 #include"../../../Scene/Game/GameScene.h"
 #include"../../Bullet/MyBullet.h"
 #define rep(i,N) for(int i=0;i<N;i++)
+void C_Player::Release()
+{}
 C_Player::C_Player()
 {}
 
@@ -23,6 +25,7 @@ void C_Player::Init()
 	Timer = 0;
 	PrevShot = 0;
 	Tex.Load("Texture/player.png");
+	m_objType = ObjectType::Player;
 }
 
 void C_Player::Update()
@@ -47,16 +50,7 @@ void C_Player::Update()
 		if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
 			
 			if (Timer - PrevShot >= 10) {
-				int bu = 0;
-				do {
-					m_mybullet = m_owner->GetMyBullet(bu);
-					if (!m_mybullet)break;
-					bu++;
-				} while (m_mybullet->GetFlag());
-				if(m_mybullet)
-				{
-					m_mybullet->Shot(Pos, Flag);
-				}
+				m_owner->PlayerShot(Pos, Flag);
 				PrevShot = Timer;
 			}
 		}

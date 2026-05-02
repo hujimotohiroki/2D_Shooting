@@ -21,6 +21,7 @@ void C_MyBullet::Init()
 	Timer = 0;
 	Angle = 0;
 	Tex.Load("Texture/bullet.png");
+	m_objType = ObjectType::MyBullet;
 }
 
 void C_MyBullet::Update()

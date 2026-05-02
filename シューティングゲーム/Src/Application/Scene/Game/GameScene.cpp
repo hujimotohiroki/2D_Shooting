@@ -26,18 +26,8 @@ void C_GameScene::Draw2D()
 	SHADER.m_spriteShader.SetMatrix(backMat2);
 	SHADER.m_spriteShader.DrawTex(&backTex2, Math::Rectangle{ 0, 0, 1280, 720 }, 1.0f);
 
-	if (m_player) {
-		m_player->Draw();
-	}
-
-	rep(en, enemynum) {
-		if(m_enemy[en]) {
-			m_enemy[en]->Draw();
-		}
-	}
-
-	if (m_boss) {
-		m_boss->Draw();
+	for (int i = 0;i < m_objList.size();i++) {
+		m_objList[i]->Draw();
 	}
 
 	rep(ex, expnum) {
@@ -45,39 +35,25 @@ void C_GameScene::Draw2D()
 		if (expFlag[ex])SHADER.m_spriteShader.DrawTex(&expTex, Math::Rectangle{ (int)(expAnimCnt[ex]) * 64, 0, 64, 64 }, 1.0f);
 	}
 
-
-	rep(bu, mybulletnum) {
-		if (m_mybullet[bu]) {
-			m_mybullet[bu]->Draw();
-		}
-	}
-
-	rep(bu, enemybulletnum) {
-		if (m_enemybullet[bu]) {
-			m_enemybullet[bu]->Draw();
-		}
-
-	}
-
 	char text[200];
 	sprintf_s(text, sizeof(text), "Score %d", score);
 	SHADER.m_spriteShader.DrawString(-608, 328, text, Math::Vector4(1, 1, 0, 1));
-	if (!m_player)SHADER.m_spriteShader.DrawString(0, 0, "GAMEOVER", Math::Vector4(1, 1, 0, 1));\
+	//if (!m_player)SHADER.m_spriteShader.DrawString(0, 0, "GAMEOVER", Math::Vector4(1, 1, 0, 1));
 }
 
 //1秒間に60回実行される(60FPSの場合)
 void C_GameScene::Update()
 {
-	if (m_player) {
-		m_player->Update();
+	for (int i = 0;i < m_objList.size();i++) {
+		m_objList[i]->Update();
 	}
-	rep(en, enemynum) {
-		if(m_enemy[en]){
-			m_enemy[en]->Update();
-		}
-	}
-	if (score > 50) {
-		m_boss->SetFlag(1);
+	if (score > -50&& !BossFlag) {
+		std::shared_ptr<C_Boss> m_boss;
+		m_boss = std::make_shared<C_Boss>();
+		m_boss->Init();
+		m_boss->SetOwner(this);
+		m_objList.push_back(m_boss);
+		BossFlag = true;
 	}
 	/*if (playerFlag == 1) {
 		
@@ -165,22 +141,6 @@ void C_GameScene::Update()
 	backY1 -= 3;
 	backY2 -= 3;
 
-	rep(bu, mybulletnum) {
-		if (m_mybullet[bu]) {
-			m_mybullet[bu]->Update();
-		}
-	}
-	rep(bu, enemybulletnum) {
-		if (m_enemybullet[bu]) {
-			m_enemybullet[bu]->Update();
-		}
-	}
-
-
-	//ボスの処理
-	//if (score >= 50 && !bossFlag) bossFlag = 1;
-	m_boss->Update();
-
 	m_hit->Update();
 	//↓Updateの最後に行列作成↓↓
 	
@@ -203,31 +163,24 @@ void C_GameScene::Init()
 	backY1 = 0;
 	backY2 = 720;
 
-	m_player = std::make_shared<C_Player>();
-	m_player->Init();
-	m_player->SetOwner(this);
+	{
+		std::shared_ptr<C_Player> m_player;
+		m_player = std::make_shared<C_Player>();
+		m_player->Init();
+		m_player->SetOwner(this);
+		m_objList.push_back(m_player);
+	}
+
+	std::shared_ptr<C_Enemy> m_enemy[enemynum];
 	rep(en,enemynum)
 	{
 		m_enemy[en] = std::make_shared<C_Enemy>();
 		m_enemy[en]->Init();
 		m_enemy[en]->SetOwner(this);
+		m_objList.push_back(m_enemy[en]);
 	}
 
-	m_boss = std::make_shared<C_Boss>();
-	m_boss->Init();
-	m_boss->SetOwner(this);
-
-	rep(bu, mybulletnum) {
-		m_mybullet[bu] = std::make_shared<C_MyBullet>();
-		m_mybullet[bu]->Init();
-		m_mybullet[bu]->SetOwner(this);
-	}
-
-	rep(bu, enemybulletnum) {
-		m_enemybullet[bu] = std::make_shared<C_EnemyBullet>();
-		m_enemybullet[bu]->Init();
-		m_enemybullet[bu]->SetOwner(this);
-	}
+	
 
 	m_hit = std::make_shared<C_Hit>();
 	m_hit->SetOwner(this);
@@ -261,30 +214,11 @@ void C_GameScene::Release()
 
 void C_GameScene::RESET()
 {
-	if(m_player){
-		m_player->Reset();
-	}
-	rep(en,enemynum)
-	{
-		if(m_enemy[en]) {
-			m_enemy[en]->Reset();
-		}
-	}
-	rep(bu, mybulletnum) {
-		if (m_mybullet[bu]) {
-			m_mybullet[bu]->Reset();
-		}
+	for (int i = 0;i < m_objList.size();i++) {
+		m_objList[i]->Reset();
 	}
 
-	rep(bu, enemybulletnum) {
-		if (m_enemybullet[bu]) {
-			m_enemybullet[bu]->Reset();
-		}
-	}
-
-	if (m_boss) {
-		m_boss->Reset();
-	}
+	BossFlag = false;
 	
 	rep(ex, expnum)expFlag[ex] = 0;
 	score = 0;
@@ -308,43 +242,29 @@ int C_GameScene::IS_HIT(float aX, float aY, float bX, float bY, float r)
 	else return 0;
 }
 
+void C_GameScene::EnemyShot(Math::Vector2 EnemyPos, int flag)
+{
+	std::shared_ptr<C_EnemyBullet> enemybullet;
+	enemybullet = std::make_shared<C_EnemyBullet>();
+	enemybullet->Init();
+	enemybullet->SetOwner(this);
+	enemybullet->SetPos(EnemyPos);
+	enemybullet->SetFlag(flag);
+	m_objList.push_back(enemybullet);
+}
+
+void C_GameScene::PlayerShot(Math::Vector2 PlayerPos, int flag)
+{
+	std::shared_ptr<C_MyBullet> mybullet;
+	mybullet = std::make_shared<C_MyBullet>();
+	mybullet->Init();
+	mybullet->SetOwner(this);
+	mybullet->SetPos(PlayerPos);
+	mybullet->SetFlag(flag);
+	m_objList.push_back(mybullet);
+}
+
 void C_GameScene::DropMP(Math::Vector2 Pos)
 {
 	
 }
-
-
-std::shared_ptr<C_Player> C_GameScene::GetPlayer()
-{
-	return m_player;
-}
-
-std::shared_ptr<C_Enemy> C_GameScene::GetEnemy(int en)
-{
-	if (en < enemynum) {
-		return m_enemy[en];
-	}
-	return nullptr;
-}
-
-std::shared_ptr<C_MyBullet> C_GameScene::GetMyBullet(int bu)
-{
-	if (bu < mybulletnum) {
-		return m_mybullet[bu];
-	}
-	return nullptr;
-}
-
-std::shared_ptr<C_EnemyBullet> C_GameScene::GetEnemyBullet(int bu)
-{
-	if (bu < enemybulletnum) {
-		return m_enemybullet[bu];
-	}
-	return nullptr;
-}
-
-std::shared_ptr<C_Mp> C_GameScene::GetMp(int bu)
-{
-	return std::shared_ptr<C_Mp>();
-}
-

@@ -21,6 +21,7 @@ void C_Mp::Init()
 	Timer = 0;
 	Angle = 0;
 	Tex.Load("Texture/bullet.png");
+	m_objType = ObjectType::Mp;
 }
 
 void C_Mp::Update()

@@ -21,6 +21,7 @@ void C_EnemyBullet::Init()
 	Timer = 0;
 	Angle = 0;
 	Tex.Load("Texture/bullet.png");
+	m_objType = ObjectType::EnemyBullet;
 }
 
 void C_EnemyBullet::Update()

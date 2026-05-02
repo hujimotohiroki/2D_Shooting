@@ -3,13 +3,8 @@
 #include "../BaseScene.h"
 
 class Scene;
-class C_Player;
-class C_Enemy;
-class C_Boss;
-class C_MyBullet;
-class C_EnemyBullet;
+class C_ObjectBase;
 class C_Hit;
-class C_Mp;
 
 class C_GameScene : public C_BaseScene
 {
@@ -24,23 +19,8 @@ private:
 	KdTexture enemybulletTex;
 	KdTexture expTex;
 
-	std::shared_ptr<C_Player> m_player;
-
+	bool BossFlag = false;
 	static const int enemynum = 10;		//総数
-	std::shared_ptr<C_Enemy> m_enemy[enemynum];
-
-	std::shared_ptr<C_Boss> m_boss;
-
-
-	//弾（自分の）の変数
-	static const int mybulletnum = 30;	//最大表示数
-	std::shared_ptr<C_MyBullet> m_mybullet[mybulletnum];
-
-
-
-	//弾（敵機の）の変数
-	static const int enemybulletnum = 1000;	//最大表示数
-	std::shared_ptr<C_EnemyBullet> m_enemybullet[enemybulletnum];
 	
 	std::shared_ptr<C_Hit>m_hit;
 
@@ -62,7 +42,7 @@ private:
 
 	int shotWait;	//弾のインターバル
 	int score;		//スコア
-
+	std::vector<std::shared_ptr<C_ObjectBase>> m_objList;
 protected:
 	Scene* m_owner;
 public:
@@ -87,13 +67,11 @@ public:
 
 	int IS_HIT(float aX, float aY, float bX, float bY, float l);
 
+	void EnemyShot(Math::Vector2 EnemyPos, int flag);
+	void PlayerShot(Math::Vector2 PlayerPos, int flag);
 	void AddScore(int AddScore) { score += AddScore; }
 	void DropMP(Math::Vector2 Pos);
-
-
-	std::shared_ptr<C_Player> GetPlayer();
-	std::shared_ptr<C_Enemy> GetEnemy(int en);
-	std::shared_ptr<C_MyBullet> GetMyBullet(int bu);
-	std::shared_ptr<C_EnemyBullet> GetEnemyBullet(int bu);
-	std::shared_ptr<C_Mp> GetMp(int bu);
+	std::vector<std::shared_ptr<C_ObjectBase>> GetObjList() {
+		return m_objList;
+	}
 };

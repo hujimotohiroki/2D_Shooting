@@ -3,13 +3,13 @@
 class C_ObjectBase;
 class C_Boss :public C_ObjectBase {
 private:
-	void Release();
+	void Release()override;
 public:
 
 	C_Boss();
-	~C_Boss();
-	void Init();
-	void Update();
-	void Draw();
-	void Reset();
+	~C_Boss()override;
+	void Init()override;
+	void Update()override;
+	void Draw()override;
+	void Reset()override;
 };

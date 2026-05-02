@@ -17,7 +17,7 @@ void C_Hit::Init()
 
 void C_Hit::Update()
 {
-	m_player = m_owner->GetPlayer();
+	/*m_player = m_owner->GetPlayer();
 	if (m_player && m_player->GetFlag()) {
 		int bu = 0;
 		Math::Vector2 pos = m_player->GetPos();
@@ -55,7 +55,7 @@ void C_Hit::Update()
 			}
 		}
 		en++;
-	}
+	}*/
 }
 
 void C_Hit::Draw()

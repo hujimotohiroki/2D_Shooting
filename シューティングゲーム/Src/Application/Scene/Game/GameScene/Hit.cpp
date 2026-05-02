@@ -4,6 +4,7 @@
 #include "../../../Chara/Enemy/Enemy.h"
 #include "../../../Bullet/EnemyBullet.h"
 #include "../../../Bullet/MyBullet.h"
+#include "../../../Bullet/Mp.h"
 
 C_Hit::C_Hit()
 {}

@@ -5,6 +5,7 @@
 #include "../../Chara/Boss/Boss.h"
 #include "../../Bullet/Mybullet.h"
 #include "../../Bullet/Enemybullet.h"
+#include "../../Bullet/Mp.h"
 #include "GameScene/Hit.h"
 #include "../SceneManager.h"
 #define rep(i,N) for(int i=0;i<N;i++)
@@ -74,6 +75,9 @@ void C_GameScene::Update()
 		if(m_enemy[en]){
 			m_enemy[en]->Update();
 		}
+	}
+	if (score > 50) {
+		m_boss->SetFlag(1);
 	}
 	/*if (playerFlag == 1) {
 		
@@ -311,6 +315,11 @@ int C_GameScene::IS_HIT(float aX, float aY, float bX, float bY, float r)
 	else return 0;
 }
 
+void C_GameScene::DropMP(Math::Vector2 Pos)
+{
+	
+}
+
 
 std::shared_ptr<C_Player> C_GameScene::GetPlayer()
 {
@@ -339,5 +348,10 @@ std::shared_ptr<C_EnemyBullet> C_GameScene::GetEnemyBullet(int bu)
 		return m_enemybullet[bu];
 	}
 	return nullptr;
+}
+
+std::shared_ptr<C_Mp> C_GameScene::GetMp(int bu)
+{
+	return std::shared_ptr<C_Mp>();
 }
 

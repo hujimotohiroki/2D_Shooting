@@ -83,8 +83,8 @@ void C_Player::Draw()
 void C_Player::Reset()
 {
 	Flag = 1;
-	Pos.x = 0;
-	Pos.y = -200;
+	Pos = {0, -200};
+	PrevShot = 0;
 }
 
 void C_Player::Hit(int damage)

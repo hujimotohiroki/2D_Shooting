@@ -9,6 +9,7 @@ class C_Boss;
 class C_MyBullet;
 class C_EnemyBullet;
 class C_Hit;
+class C_Mp;
 
 class C_GameScene : public C_BaseScene
 {
@@ -57,17 +58,6 @@ private:
 	int expFlag[expnum];					//使用フラグ
 	float expAnimCnt[expnum];				//爆発アニメの何コマ目か
 
-	//ボスの変数
-	Math::Matrix bossMat;	//座標回転拡縮を管理する行列
-	float bossSize;			//大きさの倍率
-	float bossX;			//X座標
-	float bossY;			//Y座標
-	int bossFlag;			//生存フラグ
-	float bossRadius;		//半径何ドットで描写するか
-	float bossAngle;		//角度
-	int bossHP;				//HP
-	int bossTimer;			//出現からの時間
-
 	int bucount;	//敵機を倒した数
 
 	int shotWait;	//弾のインターバル
@@ -97,8 +87,13 @@ public:
 
 	int IS_HIT(float aX, float aY, float bX, float bY, float l);
 
+	void AddScore(int AddScore) { score += AddScore; }
+	void DropMP(Math::Vector2 Pos);
+
+
 	std::shared_ptr<C_Player> GetPlayer();
 	std::shared_ptr<C_Enemy> GetEnemy(int en);
 	std::shared_ptr<C_MyBullet> GetMyBullet(int bu);
 	std::shared_ptr<C_EnemyBullet> GetEnemyBullet(int bu);
+	std::shared_ptr<C_Mp> GetMp(int bu);
 };

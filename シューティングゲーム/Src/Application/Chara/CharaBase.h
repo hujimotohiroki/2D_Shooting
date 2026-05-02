@@ -26,7 +26,8 @@ public:
 	void Update();
 	void Draw();
 
-	bool GetFlag() { return Flag; }
+	int GetFlag() { return Flag; }
+	void SetFlag(int flag) { Flag = flag; }
 	Math::Vector2 GetPos() { return Pos; }
 	float GetHitRadius() { return HitRadius; }
 	void SetOwner(C_GameScene* owner) { m_owner = owner; }

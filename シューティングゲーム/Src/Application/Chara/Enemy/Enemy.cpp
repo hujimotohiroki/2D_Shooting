@@ -18,7 +18,7 @@ void C_Enemy::Init()
 	Speed = {-1, 0};
 	Size = 1.0f;
 	Radius = 32.0f;
-	HitRadius = 5.0f;
+	HitRadius = 32.0f;
 	HitDiff = { 0,0 };
 	//Flagによって変えたい
 	HP = 5;
@@ -82,6 +82,7 @@ void C_Enemy::Reset()
 	Size = 1.0f;
 	Radius = 32.0f;
 	Timer = 0;
+	PrevShot = 0;
 }
 
 void C_Enemy::Hit(int damage)
@@ -95,4 +96,6 @@ void C_Enemy::Hit(int damage)
 void C_Enemy::Dead()
 {
 	Flag = 0;
+	m_owner->AddScore(500);
+	m_owner->DropMP(Pos);
 }

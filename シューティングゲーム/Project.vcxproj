@@ -161,6 +161,7 @@
     <ClInclude Include="..\Library\tinygltf\tiny_gltf.h" />
     <ClInclude Include="Src\Application\Bullet\BulletBase.h" />
     <ClInclude Include="Src\Application\Bullet\EnemyBullet.h" />
+    <ClInclude Include="Src\Application\Bullet\Mp.h" />
     <ClInclude Include="Src\Application\Bullet\MyBullet.h" />
     <ClInclude Include="Src\Application\Chara\Boss\Boss.h" />
     <ClInclude Include="Src\Application\Chara\CharaBase.h" />
@@ -198,6 +199,7 @@
     <ClCompile Include="..\Library\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Src\Application\Bullet\BulletBase.cpp" />
     <ClCompile Include="Src\Application\Bullet\EnemyBullet.cpp" />
+    <ClCompile Include="Src\Application\Bullet\Mp.cpp" />
     <ClCompile Include="Src\Application\Bullet\MyBullet.cpp" />
     <ClCompile Include="Src\Application\Chara\Boss\Boss.cpp" />
     <ClCompile Include="Src\Application\Chara\CharaBase.cpp" />

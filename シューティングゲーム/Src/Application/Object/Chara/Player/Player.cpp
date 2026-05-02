@@ -1,6 +1,6 @@
 #include"Player.h"
-#include"../Scene/Game/GameScene.h"
-#include"../Bullet/MyBullet.h"
+#include"../../../Scene/Game/GameScene.h"
+#include"../../Bullet/MyBullet.h"
 #define rep(i,N) for(int i=0;i<N;i++)
 C_Player::C_Player()
 {}

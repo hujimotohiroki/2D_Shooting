@@ -1,11 +1,11 @@
 #include "GameScene.h"
 #include "time.h"
-#include "../../Chara/Player.h"
-#include "../../Chara/Enemy/Enemy.h"
-#include "../../Chara/Boss/Boss.h"
-#include "../../Bullet/Mybullet.h"
-#include "../../Bullet/Enemybullet.h"
-#include "../../Bullet/Mp.h"
+#include "../../Object/Chara/Player/Player.h"
+#include "../../Object/Chara/Enemy/Enemy.h"
+#include "../../Object/Chara/Boss/Boss.h"
+#include "../../Object/Bullet/Mybullet.h"
+#include "../../Object/Bullet/Enemybullet.h"
+#include "../../Object/Bullet/Mp.h"
 #include "GameScene/Hit.h"
 #include "../SceneManager.h"
 #define rep(i,N) for(int i=0;i<N;i++)
@@ -181,12 +181,6 @@ void C_GameScene::Update()
 	//if (score >= 50 && !bossFlag) bossFlag = 1;
 	m_boss->Update();
 
-	
-	/*rep(bu, enemybulletnum) {
-		if (enemybulletFlag[bu] != 0) {
-			enemybulletTimer[bu]++;
-		}
-	}*/
 	m_hit->Update();
 	//↓Updateの最後に行列作成↓↓
 	
@@ -205,7 +199,6 @@ void C_GameScene::Init()
 	
 	backTex1.Load("Texture/back.png");
 	backTex2.Load("Texture/back.png");
-	enemybulletTex.Load("Texture/bullet.png");
 	expTex.Load("Texture/explosion.png");
 	backY1 = 0;
 	backY2 = 720;

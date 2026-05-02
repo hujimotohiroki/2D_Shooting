@@ -46,15 +46,6 @@
     <Filter Include="Src\Application\Chara">
       <UniqueIdentifier>{b287c0f0-09dc-4a49-80a3-69a9407c7089}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\Chara\Enemy">
-      <UniqueIdentifier>{3c64c87a-f944-4c20-a7c9-32964c0607bc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\Chara\Boss">
-      <UniqueIdentifier>{4afb09ef-9b1a-43f9-93bd-56934d709ada}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\Bullet">
-      <UniqueIdentifier>{b9aeed63-f441-4962-b9fd-70b7bd443b15}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\Scene">
       <UniqueIdentifier>{998e72e2-f217-4407-b28f-f814f1c06f6b}</UniqueIdentifier>
     </Filter>
@@ -66,6 +57,24 @@
     </Filter>
     <Filter Include="Src\Application\Scene\Game\GameScene">
       <UniqueIdentifier>{b013a104-8893-4ce2-ade0-3dbc5e694431}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\Object">
+      <UniqueIdentifier>{b0bab70a-a1bf-4af4-8150-bde2fc5c7c19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\Object\Bullet">
+      <UniqueIdentifier>{9f13f483-07d4-4dc4-9709-941e73b034a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\Object\Chara">
+      <UniqueIdentifier>{ad5c2cf5-49b2-498c-afef-620c87e45815}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\Object\Chara\Boss">
+      <UniqueIdentifier>{88ddfa5d-d10a-4e4c-af4f-0ab72ce60beb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\Object\Chara\Enemy">
+      <UniqueIdentifier>{2ba9bbfa-9b4d-46d2-aca8-d8698561681e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\Object\Chara\Player">
+      <UniqueIdentifier>{874a232b-91ab-4ec1-85fb-2d0631997a33}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -165,18 +174,6 @@
     <ClInclude Include="Src\Application\Chara\CharaBase.h">
       <Filter>Src\Application\Chara</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\Chara\Player.h">
-      <Filter>Src\Application\Chara</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\Chara\Enemy\Enemy.h">
-      <Filter>Src\Application\Chara\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\Chara\Boss\Boss.h">
-      <Filter>Src\Application\Chara\Boss</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\Bullet\BulletBase.h">
-      <Filter>Src\Application\Bullet</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\Scene\Title\TitleScene.h">
       <Filter>Src\Application\Scene\Title</Filter>
     </ClInclude>
@@ -189,17 +186,29 @@
     <ClInclude Include="Src\Application\Scene\SceneManager.h">
       <Filter>Src\Application\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\Bullet\EnemyBullet.h">
-      <Filter>Src\Application\Bullet</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\Scene\Game\GameScene\Hit.h">
       <Filter>Src\Application\Scene\Game\GameScene</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\Bullet\MyBullet.h">
-      <Filter>Src\Application\Bullet</Filter>
+    <ClInclude Include="Src\Application\Object\ObjectBase.h">
+      <Filter>Src\Application\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\Bullet\Mp.h">
-      <Filter>Src\Application\Bullet</Filter>
+    <ClInclude Include="Src\Application\Object\Bullet\EnemyBullet.h">
+      <Filter>Src\Application\Object\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Object\Bullet\Mp.h">
+      <Filter>Src\Application\Object\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Object\Bullet\MyBullet.h">
+      <Filter>Src\Application\Object\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Object\Chara\Boss\Boss.h">
+      <Filter>Src\Application\Object\Chara\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Object\Chara\Enemy\Enemy.h">
+      <Filter>Src\Application\Object\Chara\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Object\Chara\Player\Player.h">
+      <Filter>Src\Application\Object\Chara\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -269,21 +278,6 @@
     <ClCompile Include="Src\Application\Chara\CharaBase.cpp">
       <Filter>Src\Application\Chara</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\Chara\Player.cpp">
-      <Filter>Src\Application\Chara</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\Chara\Enemy\Enemy.cpp">
-      <Filter>Src\Application\Chara\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\Chara\Boss\Boss.cpp">
-      <Filter>Src\Application\Chara\Boss</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\Bullet\MyBullet.cpp">
-      <Filter>Src\Application\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\Bullet\BulletBase.cpp">
-      <Filter>Src\Application\Bullet</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\Scene\Game\GameScene.cpp">
       <Filter>Src\Application\Scene\Game</Filter>
     </ClCompile>
@@ -296,14 +290,29 @@
     <ClCompile Include="Src\Application\Scene\SceneManager.cpp">
       <Filter>Src\Application\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\Bullet\EnemyBullet.cpp">
-      <Filter>Src\Application\Bullet</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\Scene\Game\GameScene\Hit.cpp">
       <Filter>Src\Application\Scene\Game\GameScene</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\Bullet\Mp.cpp">
-      <Filter>Src\Application\Bullet</Filter>
+    <ClCompile Include="Src\Application\Object\ObjectBase.cpp">
+      <Filter>Src\Application\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Object\Bullet\EnemyBullet.cpp">
+      <Filter>Src\Application\Object\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Object\Bullet\Mp.cpp">
+      <Filter>Src\Application\Object\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Object\Bullet\MyBullet.cpp">
+      <Filter>Src\Application\Object\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Object\Chara\Boss\Boss.cpp">
+      <Filter>Src\Application\Object\Chara\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Object\Chara\Enemy\Enemy.cpp">
+      <Filter>Src\Application\Object\Chara\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Object\Chara\Player\Player.cpp">
+      <Filter>Src\Application\Object\Chara\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

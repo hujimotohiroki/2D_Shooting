@@ -1,5 +1,5 @@
 #include "Enemy.h"
-#include"../../Scene/Game/GameScene.h"
+#include"../../../Scene/Game/GameScene.h"
 #include"../../Bullet/EnemyBullet.h"
 
 void C_Enemy::Release()

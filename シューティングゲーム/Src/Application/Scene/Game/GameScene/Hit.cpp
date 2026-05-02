@@ -1,10 +1,10 @@
 #include "Hit.h"
 #include "../GameScene.h"
-#include "../../../Chara/Player.h"
-#include "../../../Chara/Enemy/Enemy.h"
-#include "../../../Bullet/EnemyBullet.h"
-#include "../../../Bullet/MyBullet.h"
-#include "../../../Bullet/Mp.h"
+#include "../../../Object/Chara/Player/Player.h"
+#include "../../../Object/Chara/Enemy/Enemy.h"
+#include "../../../Object/Bullet/EnemyBullet.h"
+#include "../../../Object/Bullet/MyBullet.h"
+#include "../../../Object/Bullet/Mp.h"
 
 C_Hit::C_Hit()
 {}

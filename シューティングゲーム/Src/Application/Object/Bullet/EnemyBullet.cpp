@@ -1,15 +1,15 @@
-#include "MyBullet.h"
+#include "EnemyBullet.h"
 
-void C_MyBullet::Release()
+void C_EnemyBullet::Release()
 {}
 
-C_MyBullet::C_MyBullet()
+C_EnemyBullet::C_EnemyBullet()
 {}
 
-C_MyBullet::~C_MyBullet()
+C_EnemyBullet::~C_EnemyBullet()
 {}
 
-void C_MyBullet::Init()
+void C_EnemyBullet::Init()
 {
 	Pos = { 0,0 };
 	Speed = { 0,0 };
@@ -23,10 +23,10 @@ void C_MyBullet::Init()
 	Tex.Load("Texture/bullet.png");
 }
 
-void C_MyBullet::Update()
+void C_EnemyBullet::Update()
 {
-	if(Flag){
-		Pos.x += 15;
+	if (Flag) {
+		Pos.x -= 15;
 		Timer++;
 		if (abs(Pos.x) > 700) Flag = 0;
 		Math::Matrix trans = Math::Matrix::CreateTranslation(Pos.x, (int)(Pos.y), 0);
@@ -36,25 +36,30 @@ void C_MyBullet::Update()
 	}
 }
 
-void C_MyBullet::Draw()
+void C_EnemyBullet::Draw()
 {
-	if(Flag){
+	if (Flag) {
 		SHADER.m_spriteShader.SetMatrix(Mat);
 		SHADER.m_spriteShader.DrawTex(&Tex, Math::Rectangle{ 0, 0, 16, 16 }, 1.0f);
 	}
 }
 
-void C_MyBullet::Reset()
+void C_EnemyBullet::Reset()
 {
 	Pos = { 0,0 };
-	Speed = { 0,0 };
+	Speed.x = 0;
+	Speed.y = 0;
 	Flag = 0;
 	Timer = 0;
 }
 
-void C_MyBullet::Hit()
+void C_EnemyBullet::Shot(Math::Vector2 enemyPos, int flag)
+{
+	Pos = enemyPos;
+	Flag = flag;
+}
+
+void C_EnemyBullet::Hit()
 {
 	Flag = 0;
 }
-
-

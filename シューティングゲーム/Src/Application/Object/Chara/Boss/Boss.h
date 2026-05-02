@@ -1,7 +1,7 @@
 #pragma once
-#include"../CharaBase.h"
-class C_CharaBase;
-class C_Boss :public C_CharaBase {
+#include"../../ObjectBase.h"
+class C_ObjectBase;
+class C_Boss :public C_ObjectBase {
 private:
 	void Release();
 public:

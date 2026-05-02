@@ -1,9 +1,9 @@
 #pragma once
-#include"../CharaBase.h"
-class C_CharaBase;
+#include"../../ObjectBase.h"
+class C_ObjectBase;
 class C_EnemyBullet;
 
-class C_Enemy :public C_CharaBase {
+class C_Enemy :public C_ObjectBase {
 private:
 	std::shared_ptr<C_EnemyBullet> m_enemybullet;
 	void Release();

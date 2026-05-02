@@ -14,7 +14,7 @@ private:
 	std::shared_ptr<C_MyBullet> m_mybullet;
 	std::shared_ptr<C_Enemy> m_enemy;
 	std::shared_ptr<C_EnemyBullet> m_enemybullet;
-	std::shared_ptr<C_Mp> m_enemybullet;
+	std::shared_ptr<C_Mp> m_mp;
 	
 public:
 	C_Hit();

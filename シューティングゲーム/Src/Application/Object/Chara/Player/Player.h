@@ -1,10 +1,10 @@
 #pragma once
-#include "CharaBase.h"
-class C_CharaBase;
+#include "../../ObjectBase.h"
+class C_ObjectBase;
 class C_MyBullet;
 
 
-class C_Player : public C_CharaBase  {
+class C_Player : public C_ObjectBase  {
 private:
 	std::shared_ptr<C_MyBullet> m_mybullet;
 	void Release();

@@ -8,7 +8,7 @@ class C_Player : public C_ObjectBase  {
 private:
 	std::shared_ptr<C_MyBullet> m_mybullet;
 	void Release() override;
-	float mp;
+	int mp;
 	
 public:
 
@@ -19,7 +19,7 @@ public:
 	void Draw()override;
 	void Reset()override;
 
-	void Hit(int damage);
+	void Hit(int damage)override;
 	void Dead();
-	
+	void AddMp() { mp++; };
 };

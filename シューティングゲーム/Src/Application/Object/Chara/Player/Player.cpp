@@ -1,6 +1,7 @@
 #include"Player.h"
 #include"../../../Scene/Game/GameScene.h"
 #include"../../Bullet/MyBullet.h"
+#include "../../Bullet/Mp.h"
 #define rep(i,N) for(int i=0;i<N;i++)
 void C_Player::Release()
 {}
@@ -22,6 +23,8 @@ void C_Player::Init()
 	HitRadius = 5.0f;
 	HitDiff = { 0,0 };
 	HP = 10;
+	mp = 0;
+	Damage = 5;
 	Timer = 0;
 	PrevShot = 0;
 	Tex.Load("Texture/player.png");
@@ -58,6 +61,20 @@ void C_Player::Update()
 		if (Pos.x < -608)Pos.x = -608;
 		if (Pos.y > 328)Pos.y = 328;
 		if (Pos.y < -328)Pos.y = -328;
+		for (auto& obj : m_owner->GetObjList()) {
+			ObjectType type = obj->GetObjType();
+			if (type == ObjectType::Enemy || type == ObjectType::Boss || type == ObjectType::EnemyBullet || type == ObjectType::Mp) {
+				Math::Vector2 v;
+				v = obj->GetPos() - Pos;
+				if (v.Length() < HitRadius+obj->GetHitRadius()) {
+					Hit(obj->GetObjDamage());
+					obj->Hit(Damage);
+					if (type == ObjectType::Mp) {
+						AddMp();
+					}
+				}
+			}
+		}
 	}
 	Timer++;
 	Math::Matrix trans = Math::Matrix::CreateTranslation(Pos.x, (int)(Pos.y), 0);

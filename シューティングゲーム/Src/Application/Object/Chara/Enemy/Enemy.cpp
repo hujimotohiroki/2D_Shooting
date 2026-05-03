@@ -22,6 +22,7 @@ void C_Enemy::Init()
 	HitDiff = { 0,0 };
 	//Flagによって変えたい
 	HP = 5;
+	Damage = 5;
 	Timer = 0;
 	PrevShot = 0;
 	Tex.Load("Texture/enemy.png");
@@ -44,6 +45,17 @@ void C_Enemy::Update()
 			}
 		}
 		//自機狙いを打ちたい
+		for (auto& obj : m_owner->GetObjList()) {
+			ObjectType type = obj->GetObjType();
+			if (type == ObjectType::MyBullet) {
+				Math::Vector2 v;
+				v = obj->GetPos() - Pos;
+				if (v.Length() < HitRadius + obj->GetHitRadius()) {
+					Hit(obj->GetObjDamage());
+					obj->Hit(Damage);
+				}
+			}
+		}
 	}
 	if (Flag != 0) {
 		if (HP <= 0) {
@@ -89,5 +101,6 @@ void C_Enemy::Dead()
 {
 	Flag = 0;
 	m_owner->AddScore(500);
-	m_owner->DropMP(Pos);
+	int tmp = 1;
+	m_owner->DropMP(Pos,tmp);
 }

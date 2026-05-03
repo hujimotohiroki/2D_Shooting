@@ -28,7 +28,12 @@ public:
 	Math::Vector2 GetPos() { return Pos; }
 	void SetPos(Math::Vector2 pos) { Pos = pos; }
 	float GetHitRadius() { return HitRadius; }
+	float GetRadius() { return Radius; }
 	void SetOwner(C_GameScene* owner) { m_owner = owner; }
+	ObjectType GetObjType() { return m_objType; }
+	int GetObjDamage() { return Damage; }
+
+	virtual void Hit(int damage) { ; }
 protected:
 	Math::Matrix Mat;
 	Math::Vector2 Pos;
@@ -43,6 +48,7 @@ protected:
 	int Timer;
 	int PrevShot;
 	int HP;
+	int Damage;				//与えるダメージ
 	float Angle;
 	KdTexture Tex;
 	C_GameScene* m_owner;

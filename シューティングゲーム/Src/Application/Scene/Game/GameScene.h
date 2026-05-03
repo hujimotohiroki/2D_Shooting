@@ -4,7 +4,6 @@
 
 class Scene;
 class C_ObjectBase;
-class C_Hit;
 
 class C_GameScene : public C_BaseScene
 {
@@ -21,8 +20,6 @@ private:
 
 	bool BossFlag = false;
 	static const int enemynum = 10;		//総数
-	
-	std::shared_ptr<C_Hit>m_hit;
 
 	//背景
 	Math::Matrix backMat1;
@@ -65,12 +62,10 @@ public:
 
 	void Explosion(float x, float y);
 
-	int IS_HIT(float aX, float aY, float bX, float bY, float l);
-
 	void EnemyShot(Math::Vector2 EnemyPos, int flag);
 	void PlayerShot(Math::Vector2 PlayerPos, int flag);
 	void AddScore(int AddScore) { score += AddScore; }
-	void DropMP(Math::Vector2 Pos);
+	void DropMP(Math::Vector2 Pos,int drop);
 	std::vector<std::shared_ptr<C_ObjectBase>> GetObjList() {
 		return m_objList;
 	}

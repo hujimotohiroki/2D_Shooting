@@ -18,6 +18,8 @@ void C_MyBullet::Init()
 	HitRadius = 8.0f;
 	HitDiff = { 0,0 };
 	Flag = 0;
+	HP = 1;
+	Damage = 1;
 	Timer = 0;
 	Angle = 0;
 	Tex.Load("Texture/bullet.png");
@@ -59,9 +61,13 @@ void C_MyBullet::Shot(Math::Vector2 playerPos, int flag)
 	Flag = flag;
 }
 
-void C_MyBullet::Hit()
+void C_MyBullet::Hit(int damage)
 {
-	Flag = 0;
+	HP -= damage;
+	if (HP < 0)
+	{
+		Flag = 0;
+	}
 }
 
 

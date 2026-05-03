@@ -18,6 +18,8 @@ void C_EnemyBullet::Init()
 	HitRadius = 8.0f;
 	HitDiff = { 0,0 };
 	Flag = 0;
+	HP = 1;
+	Damage = 1;
 	Timer = 0;
 	Angle = 0;
 	Tex.Load("Texture/bullet.png");
@@ -60,7 +62,11 @@ void C_EnemyBullet::Shot(Math::Vector2 enemyPos, int flag)
 	Flag = flag;
 }
 
-void C_EnemyBullet::Hit()
+void C_EnemyBullet::Hit(int damage)
 {
-	Flag = 0;
+	HP -= damage;
+	if(HP<0)
+	{
+		Flag = 0;
+	}
 }

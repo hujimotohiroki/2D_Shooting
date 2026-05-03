@@ -16,6 +16,6 @@ public:
 	void Draw()override;
 	void Reset()override;
 
-	void Hit(int damage);
+	void Hit(int damage)override;
 	void Dead();
 };

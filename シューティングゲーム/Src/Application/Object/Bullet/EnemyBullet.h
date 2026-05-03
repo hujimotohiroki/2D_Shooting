@@ -16,6 +16,6 @@ public:
 	void Reset()override;
 
 	void Shot(Math::Vector2 enemyPos, int flag);
-	void Hit();
+	void Hit(int damage);
 	void SetOwner(C_GameScene* owner) { m_owner = owner; }
 };

@@ -1,4 +1,5 @@
 #include "Boss.h"
+#include "../../../Scene/Game/GameScene.h"
 
 void C_Boss::Release()
 {}
@@ -14,6 +15,7 @@ void C_Boss::Init()
 	Pos.x = 0;
 	Pos.y = 456;
 	HP = 100;
+	Damage = 10;
 	Size = 3;	
 	Radius = 96;
 	Timer = 0;
@@ -43,6 +45,17 @@ void C_Boss::Update()
 		//		}
 		//	}
 		//}
+		for (auto& obj : m_owner->GetObjList()) {
+			ObjectType type = obj->GetObjType();
+			if (type == ObjectType::MyBullet) {
+				Math::Vector2 v;
+				v = obj->GetPos() - Pos;
+				if (v.Length() < HitRadius + obj->GetHitRadius()) {
+					Hit(obj->GetObjDamage());
+					obj->Hit(Damage);
+				}
+			}
+		}
 	}
 	Math::Matrix trans = Math::Matrix::CreateTranslation(Pos.x, (int)(Pos.y), 0);
 	Math::Matrix scale = Math::Matrix::CreateScale(Size, Size, 0);

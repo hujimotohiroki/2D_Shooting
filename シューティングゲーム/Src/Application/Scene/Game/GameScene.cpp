@@ -6,7 +6,6 @@
 #include "../../Object/Bullet/Mybullet.h"
 #include "../../Object/Bullet/Enemybullet.h"
 #include "../../Object/Bullet/Mp.h"
-#include "GameScene/Hit.h"
 #include "../SceneManager.h"
 #define rep(i,N) for(int i=0;i<N;i++)
 //プログラムを打つときは半角英数字で
@@ -44,8 +43,12 @@ void C_GameScene::Draw2D()
 //1秒間に60回実行される(60FPSの場合)
 void C_GameScene::Update()
 {
+	//使い終わった弾や敵(Flag=0)を消すのを忘れないように
 	for (int i = 0;i < m_objList.size();i++) {
 		m_objList[i]->Update();
+		if (m_objList[i]->GetFlag() == 0) {
+			m_objList.erase(m_objList.begin() + i);
+		}
 	}
 	if (score > -50&& !BossFlag) {
 		std::shared_ptr<C_Boss> m_boss;
@@ -140,8 +143,6 @@ void C_GameScene::Update()
 	if (backY2 < -717)backY2 = 717;
 	backY1 -= 3;
 	backY2 -= 3;
-
-	m_hit->Update();
 	//↓Updateの最後に行列作成↓↓
 	
 	
@@ -180,11 +181,6 @@ void C_GameScene::Init()
 		m_objList.push_back(m_enemy[en]);
 	}
 
-	
-
-	m_hit = std::make_shared<C_Hit>();
-	m_hit->SetOwner(this);
-
 	bucount = 0;
 	shotWait = 0;
 	//弾の初期設定
@@ -214,14 +210,43 @@ void C_GameScene::Release()
 
 void C_GameScene::RESET()
 {
-	for (int i = 0;i < m_objList.size();i++) {
-		m_objList[i]->Reset();
-	}
+	m_objList.clear();
 
 	BossFlag = false;
-	
-	rep(ex, expnum)expFlag[ex] = 0;
+	{
+		std::shared_ptr<C_Player> m_player;
+		m_player = std::make_shared<C_Player>();
+		m_player->Init();
+		m_player->SetOwner(this);
+		m_objList.push_back(m_player);
+	}
+
+	std::shared_ptr<C_Enemy> m_enemy[enemynum];
+	rep(en, enemynum)
+	{
+		m_enemy[en] = std::make_shared<C_Enemy>();
+		m_enemy[en]->Init();
+		m_enemy[en]->SetOwner(this);
+		m_objList.push_back(m_enemy[en]);
+	}
+
+	bucount = 0;
+	shotWait = 0;
+	//弾の初期設定
+	srand(time(0));
+	rand();
+
+	//敵の初期設定
 	score = 0;
+	rep(ex, expnum) {
+		expX[ex] = 0;
+		expY[ex] = 0;
+		expFlag[ex] = 0;
+		expAnimCnt[ex] = 0;
+	}
+	//爆発の初期設定
+
+	
 }
 
 void C_GameScene::Explosion(float x, float y)
@@ -233,14 +258,6 @@ void C_GameScene::Explosion(float x, float y)
 	expFlag[ex] = 1;
 }
 
-int C_GameScene::IS_HIT(float aX, float aY, float bX, float bY, float r)
-{
-	float a = aX - bX;
-	float b = aY - bY;
-	float c = sqrt(a * a + b * b);
-	if (c < r) return 1;
-	else return 0;
-}
 
 void C_GameScene::EnemyShot(Math::Vector2 EnemyPos, int flag)
 {
@@ -264,7 +281,15 @@ void C_GameScene::PlayerShot(Math::Vector2 PlayerPos, int flag)
 	m_objList.push_back(mybullet);
 }
 
-void C_GameScene::DropMP(Math::Vector2 Pos)
+void C_GameScene::DropMP(Math::Vector2 Pos,int drop)
 {
 	
+	rep(i,drop){
+		std::shared_ptr<C_Mp> mp;
+		mp = std::make_shared<C_Mp>();
+		mp->Init();
+		mp->SetOwner(this);
+		mp->SetPos(Pos);
+		m_objList.push_back(mp);
+	}
 }

@@ -1,4 +1,5 @@
 #include "Mp.h"
+#include "../../Scene/Game/GameScene.h"
 
 void C_Mp::Release()
 {}
@@ -17,7 +18,9 @@ void C_Mp::Init()
 	Radius = 8.0f;
 	HitRadius = 8.0f;
 	HitDiff = { 0,0 };
-	Flag = 0;
+	Flag = 1;
+	HP = 1;
+	Damage = 0;
 	Timer = 0;
 	Angle = 0;
 	Tex.Load("Texture/bullet.png");
@@ -27,9 +30,18 @@ void C_Mp::Init()
 void C_Mp::Update()
 {
 	if (Flag) {
-		Pos.x -= 15;
+		Pos.x -= 5;
 		Timer++;
 		if (abs(Pos.x) > 700) Flag = 0;
+		for (auto& obj : m_owner->GetObjList()) {
+			if (obj->GetObjType() == ObjectType::Player) {
+				Math::Vector2 v;
+				v = obj->GetPos() - Pos;
+				if (v.Length() > HitRadius + obj->GetHitRadius() && v.Length() < HitRadius + obj->GetRadius()) {
+					Near(obj->GetPos());
+				}
+			}
+		}
 		Math::Matrix trans = Math::Matrix::CreateTranslation(Pos.x, (int)(Pos.y), 0);
 		Math::Matrix scale = Math::Matrix::CreateScale(Size, Size, 0);
 		Math::Matrix rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(Angle));
@@ -38,14 +50,24 @@ void C_Mp::Update()
 }
 
 void C_Mp::Draw()
-{}
+{
+	if (Flag) {
+		SHADER.m_spriteShader.SetMatrix(Mat);
+		SHADER.m_spriteShader.DrawTex(&Tex, Math::Rectangle{ 0, 0, 16, 16 }, 1.0f);
+	}
+}
 
 void C_Mp::Reset()
 {}
 
-void C_Mp::Hit()
+void C_Mp::Hit(int damage)
 {
-	Flag = 0;
+	HP -= damage;
+	if(HP<0)
+	{
+		
+		Flag = 0;
+	}
 }
 
 void C_Mp::Near(Math::Vector2 PlayerPos)

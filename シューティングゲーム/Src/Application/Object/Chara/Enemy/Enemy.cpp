@@ -14,8 +14,9 @@ C_Enemy::~C_Enemy()
 void C_Enemy::Init()
 {
 	Pos = { 608, (float)(rand() % 655 - 328) };
-	Flag = 1;
+	Flag = 3;
 	Speed = {-1, 0};
+	MoveSpeed = 3.0f;
 	Size = 1.0f;
 	Radius = 32.0f;
 	HitRadius = 32.0f;
@@ -31,18 +32,43 @@ void C_Enemy::Init()
 
 void C_Enemy::Update()
 {
-	if (Flag == 1) {
+	if (Flag != 0) {
 		if (Timer < 60) {
-			Pos += Speed;
+			Pos += Speed*MoveSpeed;
 			if (Pos.y < -392) Pos.y = 392;
 			if (Pos.x > 608) Pos.x = -608;
 			if (Pos.x < -608) Pos.x = 608;
 		}
 		if (Timer > 60 && Timer - PrevShot >= 10) {
-			if (Timer - PrevShot >= 10) {
-				m_owner->EnemyShot(Pos,Flag);
-				PrevShot = Timer;
+			if(Flag==1){
+				if (Timer - PrevShot >= 10) {
+					m_owner->EnemyShot(Pos, Flag);
+				}
 			}
+			if (Flag == 2) {
+				if (Timer - PrevShot >= 10) {
+					for (auto& obj : m_owner->GetObjList()) {
+						ObjectType type = obj->GetObjType();
+						if (type == ObjectType::Player) {
+							Math::Vector2 playerPos;
+							playerPos = obj->GetPos();
+							m_owner->EnemySnipeShot(Pos, playerPos, Flag);
+						}
+					}
+				}
+			}
+			if (Flag == 3) {
+				if (Timer - PrevShot >= 10) {
+					m_owner->EnemySpreadShot(Pos, Flag);
+				}
+			}
+			PrevShot = Timer;
+		}
+		if (Timer > 180) {
+			Pos += Speed*MoveSpeed;
+			if (Pos.y < -392) Pos.y = 392;
+			if (Pos.x > 608) Pos.x = -608;
+			if (Pos.x < -608) Pos.x = 608;
 		}
 		//自機狙いを打ちたい
 		for (auto& obj : m_owner->GetObjList()) {
@@ -72,7 +98,7 @@ void C_Enemy::Update()
 
 void C_Enemy::Draw()
 {
-	if (Flag == 1) {
+	if (Flag != 0) {
 		SHADER.m_spriteShader.SetMatrix(Mat);
 		SHADER.m_spriteShader.DrawTex(&Tex, Math::Rectangle{ 0, 0, 64, 64 }, 1.0f);
 	}

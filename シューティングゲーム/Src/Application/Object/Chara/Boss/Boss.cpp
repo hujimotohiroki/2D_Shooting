@@ -15,6 +15,7 @@ void C_Boss::Init()
 	Pos.x = 0;
 	Pos.y = 456;
 	HP = 100;
+	MaxHP = HP;
 	Damage = 10;
 	Size = 3;	
 	Radius = 96;

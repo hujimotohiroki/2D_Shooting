@@ -27,6 +27,8 @@ public:
 	void SetFlag(int flag) { Flag = flag; }
 	Math::Vector2 GetPos() { return Pos; }
 	void SetPos(Math::Vector2 pos) { Pos = pos; }
+	void SetSpeed(Math::Vector2 speed) { Speed = speed; }
+	void SetDamage(int damage) { Damage = damage; }
 	float GetHitRadius() { return HitRadius; }
 	float GetRadius() { return Radius; }
 	void SetOwner(C_GameScene* owner) { m_owner = owner; }
@@ -48,6 +50,7 @@ protected:
 	int Timer;
 	int PrevShot;
 	int HP;
+	int MaxHP;
 	int Damage;				//与えるダメージ
 	float Angle;
 	KdTexture Tex;

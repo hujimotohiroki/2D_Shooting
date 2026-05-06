@@ -13,6 +13,7 @@ void C_EnemyBullet::Init()
 {
 	Pos = { 0,0 };
 	Speed = { 0,0 };
+	MoveSpeed = 20.0f;
 	Size = 1.0f;
 	Radius = 8.0f;
 	HitRadius = 8.0f;
@@ -29,7 +30,7 @@ void C_EnemyBullet::Init()
 void C_EnemyBullet::Update()
 {
 	if (Flag) {
-		Pos.x -= 15;
+		Pos+=Speed*MoveSpeed;
 		Timer++;
 		if (abs(Pos.x) > 700) Flag = 0;
 		Math::Matrix trans = Math::Matrix::CreateTranslation(Pos.x, (int)(Pos.y), 0);

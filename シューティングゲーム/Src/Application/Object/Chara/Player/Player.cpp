@@ -23,6 +23,7 @@ void C_Player::Init()
 	HitRadius = 5.0f;
 	HitDiff = { 0,0 };
 	HP = 10;
+	MaxHP = HP;
 	mp = 0;
 	Damage = 5;
 	Timer = 0;
@@ -50,12 +51,20 @@ void C_Player::Update()
 		if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
 			Pos.y -= MoveSpeed;
 		}
-		if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
-			
+		if (GetAsyncKeyState('Z') & 0x8000) {
 			if (Timer - PrevShot >= 10) {
 				m_owner->PlayerShot(Pos, Flag);
 				PrevShot = Timer;
 			}
+		}
+		if (GetAsyncKeyState('X') & 0x8000) {
+			;
+		}
+		if (GetAsyncKeyState('C') & 0x8000) {
+			;
+		}
+		if (GetAsyncKeyState('V') & 0x8000) {
+			;
 		}
 		if (Pos.x > 608) Pos.x = 608;
 		if (Pos.x < -608)Pos.x = -608;

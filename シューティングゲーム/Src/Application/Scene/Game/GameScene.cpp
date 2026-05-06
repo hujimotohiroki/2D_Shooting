@@ -25,7 +25,7 @@ void C_GameScene::Draw2D()
 	SHADER.m_spriteShader.SetMatrix(backMat2);
 	SHADER.m_spriteShader.DrawTex(&backTex2, Math::Rectangle{ 0, 0, 1280, 720 }, 1.0f);
 
-	for (int i = 0;i < m_objList.size();i++) {
+	rep(i,m_objList.size()) {
 		m_objList[i]->Draw();
 	}
 
@@ -43,8 +43,19 @@ void C_GameScene::Draw2D()
 //1秒間に60回実行される(60FPSの場合)
 void C_GameScene::Update()
 {
+	rep(en, enemynum) {
+		if (nowtime >enemywaiting[en].timer){
+			std::shared_ptr<C_Enemy> m_enemy;
+			m_enemy = std::make_shared<C_Enemy>();
+			m_enemy->Init();
+			m_enemy->SetOwner(this);
+			m_enemy->SetPos(enemywaiting[en].pos);
+			m_enemy->SetFlag(enemywaiting[en].flag);
+			m_objList.push_back(m_enemy);
+		}
+	}
 	//使い終わった弾や敵(Flag=0)を消すのを忘れないように
-	for (int i = 0;i < m_objList.size();i++) {
+	rep (i,m_objList.size()) {
 		m_objList[i]->Update();
 		if (m_objList[i]->GetFlag() == 0) {
 			m_objList.erase(m_objList.begin() + i);
@@ -143,12 +154,12 @@ void C_GameScene::Update()
 	if (backY2 < -717)backY2 = 717;
 	backY1 -= 3;
 	backY2 -= 3;
+
+	nowtime++;
+
 	//↓Updateの最後に行列作成↓↓
-	
-	
 	backMat1 = Math::Matrix::CreateTranslation(0, backY1, 0);
 	backMat2 = Math::Matrix::CreateTranslation(0, backY2, 0);
-	
 	
 	rep(ex, expnum) expMat[ex] = Math::Matrix::CreateTranslation(expX[ex], expY[ex], 0);
 }
@@ -172,15 +183,7 @@ void C_GameScene::Init()
 		m_objList.push_back(m_player);
 	}
 
-	std::shared_ptr<C_Enemy> m_enemy[enemynum];
-	rep(en,enemynum)
-	{
-		m_enemy[en] = std::make_shared<C_Enemy>();
-		m_enemy[en]->Init();
-		m_enemy[en]->SetOwner(this);
-		m_objList.push_back(m_enemy[en]);
-	}
-
+	nowtime = 0;
 	bucount = 0;
 	shotWait = 0;
 	//弾の初期設定
@@ -221,15 +224,6 @@ void C_GameScene::RESET()
 		m_objList.push_back(m_player);
 	}
 
-	std::shared_ptr<C_Enemy> m_enemy[enemynum];
-	rep(en, enemynum)
-	{
-		m_enemy[en] = std::make_shared<C_Enemy>();
-		m_enemy[en]->Init();
-		m_enemy[en]->SetOwner(this);
-		m_objList.push_back(m_enemy[en]);
-	}
-
 	bucount = 0;
 	shotWait = 0;
 	//弾の初期設定
@@ -266,6 +260,38 @@ void C_GameScene::EnemyShot(Math::Vector2 EnemyPos, int flag)
 	enemybullet->Init();
 	enemybullet->SetOwner(this);
 	enemybullet->SetPos(EnemyPos);
+	enemybullet->SetSpeed({-1,0});
+	enemybullet->SetFlag(flag);
+	m_objList.push_back(enemybullet);
+}
+
+void C_GameScene::EnemySpreadShot(Math::Vector2 EnemyPos, int flag)
+{
+	std::shared_ptr<C_EnemyBullet> enemybullet;
+	enemybullet = std::make_shared<C_EnemyBullet>();
+	enemybullet->Init();
+	enemybullet->SetOwner(this);
+	enemybullet->SetPos(EnemyPos);
+	Math::Vector2 enemyMove;
+	enemyMove.x = std::cos(DirectX::XMConvertToRadians(rand() % 91 + 135));
+	enemyMove.y = std::sin(DirectX::XMConvertToRadians(rand() % 91 + 135));
+	enemyMove.Normalize();
+	enemybullet->SetSpeed(enemyMove);
+	enemybullet->SetFlag(flag);
+	m_objList.push_back(enemybullet);
+}
+
+void C_GameScene::EnemySnipeShot(Math::Vector2 EnemyPos, Math::Vector2 PlayerPos, int flag)
+{
+	std::shared_ptr<C_EnemyBullet> enemybullet;
+	enemybullet = std::make_shared<C_EnemyBullet>();
+	enemybullet->Init();
+	enemybullet->SetOwner(this);
+	enemybullet->SetPos(EnemyPos);
+	Math::Vector2 enemyMove = PlayerPos - EnemyPos;
+	enemyMove.x;
+	enemyMove.Normalize();
+	enemybullet->SetSpeed(enemyMove);
 	enemybullet->SetFlag(flag);
 	m_objList.push_back(enemybullet);
 }
@@ -277,13 +303,13 @@ void C_GameScene::PlayerShot(Math::Vector2 PlayerPos, int flag)
 	mybullet->Init();
 	mybullet->SetOwner(this);
 	mybullet->SetPos(PlayerPos);
+	mybullet->SetSpeed({ 1,0 });
 	mybullet->SetFlag(flag);
 	m_objList.push_back(mybullet);
 }
 
 void C_GameScene::DropMP(Math::Vector2 Pos,int drop)
 {
-	
 	rep(i,drop){
 		std::shared_ptr<C_Mp> mp;
 		mp = std::make_shared<C_Mp>();
@@ -291,5 +317,25 @@ void C_GameScene::DropMP(Math::Vector2 Pos,int drop)
 		mp->SetOwner(this);
 		mp->SetPos(Pos);
 		m_objList.push_back(mp);
+	}
+}
+
+void C_GameScene::LoadEnemy()
+{
+	FILE* fp;
+	fp = fopen("stagedata/Stage1.txt", "r");
+	if (fp != nullptr) {
+		printf("\nファイルの読み込み成功\n");
+		float x, y;
+		int flag,timer;
+		for (int en = 0;en < enemynum;en++) {
+			fscanf_s(fp, "%f,%f,%d,%d\n", &x, &y, &flag,&timer);
+			Math::Vector2 pos = { x,y };
+			enemywaiting[en] = {pos,flag,timer};
+		}
+		fclose(fp);
+	}
+	else {
+		printf("\nファイルの読み込み失敗\n");
 	}
 }

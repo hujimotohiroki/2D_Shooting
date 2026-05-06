@@ -5,10 +5,16 @@
 class Scene;
 class C_ObjectBase;
 
+struct enemywait {
+	Math::Vector2 pos;
+	int flag;
+	int timer;
+};
+
 class C_GameScene : public C_BaseScene
 {
 private:
-
+	
 	// テクスチャ ・・・ 画像データ
 	
 	KdTexture backTex1;
@@ -19,8 +25,8 @@ private:
 	KdTexture expTex;
 
 	bool BossFlag = false;
-	static const int enemynum = 10;		//総数
-
+	static const int enemynum = 1;		
+	enemywait enemywaiting[enemynum] ;
 	//背景
 	Math::Matrix backMat1;
 	float backY1;
@@ -37,9 +43,11 @@ private:
 
 	int bucount;	//敵機を倒した数
 
+	int nowtime;
 	int shotWait;	//弾のインターバル
 	int score;		//スコア
 	std::vector<std::shared_ptr<C_ObjectBase>> m_objList;
+	
 protected:
 	Scene* m_owner;
 public:
@@ -63,10 +71,14 @@ public:
 	void Explosion(float x, float y);
 
 	void EnemyShot(Math::Vector2 EnemyPos, int flag);
+	void EnemySpreadShot(Math::Vector2 EnemyPos, int flag);
+	void EnemySnipeShot(Math::Vector2 EnemyPos, Math::Vector2 playerPos, int flag);
 	void PlayerShot(Math::Vector2 PlayerPos, int flag);
 	void AddScore(int AddScore) { score += AddScore; }
 	void DropMP(Math::Vector2 Pos,int drop);
 	std::vector<std::shared_ptr<C_ObjectBase>> GetObjList() {
 		return m_objList;
 	}
+	
+	void LoadEnemy();
 };

@@ -31,10 +31,15 @@ public:
 	void SetDamage(int damage) { Damage = damage; }
 	float GetHitRadius() { return HitRadius; }
 	float GetRadius() { return Radius; }
+	void SetHP(int hp) { HP = hp; }
 	void SetOwner(C_GameScene* owner) { m_owner = owner; }
 	ObjectType GetObjType() { return m_objType; }
 	int GetObjDamage() { return Damage; }
-
+	void SetRadius(float radius) { Radius = radius; }
+	void SetHitRadius(float hitradius) { HitRadius = hitradius; }
+	void SetHp(int hp) { HP = hp; }
+	void SetMaxHp(int hp) { MaxHP = hp; }
+	void SetSize(float size) { Size = size; }
 	virtual void Hit(int damage) { ; }
 protected:
 	Math::Matrix Mat;
@@ -53,6 +58,7 @@ protected:
 	int MaxHP;
 	int Damage;				//与えるダメージ
 	float Angle;
+	float Clean;
 	KdTexture Tex;
 	C_GameScene* m_owner;
 	ObjectType m_objType= ObjectType::None;

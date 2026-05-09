@@ -16,6 +16,6 @@ public:
 	void Reset()override;
 
 	void Hit(int damage)override;
-	void Near(Math::Vector2 PlayerPos);
+	void Near(Math::Vector2 PlayerPos,int length);
 	void SetOwner(C_GameScene* owner) { m_owner = owner; }
 };

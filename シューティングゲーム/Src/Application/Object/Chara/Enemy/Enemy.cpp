@@ -13,10 +13,10 @@ C_Enemy::~C_Enemy()
 
 void C_Enemy::Init()
 {
-	Pos = { 608, (float)(rand() % 655 - 328) };
-	Flag = 3;
+	Pos = { 0,0 };
+	Flag = 0;
 	Speed = {-1, 0};
-	MoveSpeed = 3.0f;
+	MoveSpeed = 5.0f;
 	Size = 1.0f;
 	Radius = 32.0f;
 	HitRadius = 32.0f;
@@ -26,51 +26,60 @@ void C_Enemy::Init()
 	Damage = 5;
 	Timer = 0;
 	PrevShot = 0;
+	Clean = 1.0;
 	Tex.Load("Texture/enemy.png");
 	m_objType = ObjectType::Enemy;
 }
 
 void C_Enemy::Update()
 {
-	if (Flag != 0) {
+	Clean = 1.0f;
+	switch (Flag) {
+	case 1:
 		if (Timer < 60) {
-			Pos += Speed*MoveSpeed;
-			if (Pos.y < -392) Pos.y = 392;
-			if (Pos.x > 608) Pos.x = -608;
-			if (Pos.x < -608) Pos.x = 608;
+			Pos += Speed * MoveSpeed;
 		}
-		if (Timer > 60 && Timer - PrevShot >= 10) {
-			if(Flag==1){
-				if (Timer - PrevShot >= 10) {
-					m_owner->EnemyShot(Pos, Flag);
-				}
-			}
-			if (Flag == 2) {
-				if (Timer - PrevShot >= 10) {
-					for (auto& obj : m_owner->GetObjList()) {
-						ObjectType type = obj->GetObjType();
-						if (type == ObjectType::Player) {
-							Math::Vector2 playerPos;
-							playerPos = obj->GetPos();
-							m_owner->EnemySnipeShot(Pos, playerPos, Flag);
-						}
-					}
-				}
-			}
-			if (Flag == 3) {
-				if (Timer - PrevShot >= 10) {
-					m_owner->EnemySpreadShot(Pos, Flag);
+		if (Timer > 90 && Timer - PrevShot >= 10) {
+			m_owner->EnemyShot(Pos, Flag);
+			PrevShot = Timer;
+		}
+		if (Timer > 210) {
+			Pos += Speed * MoveSpeed;
+			if (Pos.x < -608) Flag=0;
+		}
+		break;
+	case 2:
+		Pos += Speed * MoveSpeed;
+		if (Timer > 120 && Timer - PrevShot >= 10) {
+			for (auto& obj : m_owner->GetObjList()) {
+				ObjectType type = obj->GetObjType();
+				if (type == ObjectType::Player) {
+					Math::Vector2 playerPos;
+					playerPos = obj->GetPos();
+					m_owner->EnemySnipeShot(Pos, playerPos, Flag);
 				}
 			}
 			PrevShot = Timer;
 		}
-		if (Timer > 180) {
-			Pos += Speed*MoveSpeed;
-			if (Pos.y < -392) Pos.y = 392;
-			if (Pos.x > 608) Pos.x = -608;
-			if (Pos.x < -608) Pos.x = 608;
+		break;
+	case 3:
+		if (Timer < 60) {
+			Pos += Speed * MoveSpeed;
 		}
-		//自機狙いを打ちたい
+		else if (Timer > 90 && Timer < 420 && Timer - PrevShot >= 3) {
+			m_owner->EnemySpreadShot(Pos, Flag);
+			PrevShot = Timer;
+		}
+		else if (Timer > 420) {
+			Pos += Speed * MoveSpeed;
+			if (Pos.x < -608) Flag = 0;
+		}
+		break;
+	default:
+		break;
+	}
+	if (Flag > 0) {
+		//当たり判定
 		for (auto& obj : m_owner->GetObjList()) {
 			ObjectType type = obj->GetObjType();
 			if (type == ObjectType::MyBullet) {
@@ -82,16 +91,12 @@ void C_Enemy::Update()
 				}
 			}
 		}
+		Timer++;
 	}
-	if (Flag != 0) {
-		if (HP <= 0) {
-			Flag = 0;
-			//score += 100;
-			//Explosion(Pos.x, Pos.y);
-		}
-		else {
-			Timer++;
-		}
+	if (Flag == -1) {
+		Speed.y -= 1;
+		Pos += Speed;
+		if (Pos.y < -392) Flag = 0;
 	}
 	Mat = Math::Matrix::CreateTranslation(Pos.x, Pos.y, 0);
 }
@@ -100,13 +105,13 @@ void C_Enemy::Draw()
 {
 	if (Flag != 0) {
 		SHADER.m_spriteShader.SetMatrix(Mat);
-		SHADER.m_spriteShader.DrawTex(&Tex, Math::Rectangle{ 0, 0, 64, 64 }, 1.0f);
+		SHADER.m_spriteShader.DrawTex(&Tex, Math::Rectangle{ 0, 0, 64, 64 }, Clean);
 	}
 }
 
 void C_Enemy::Reset()
 {
-	Pos = { 608, (float)(rand() % 655 - 328) };
+	Pos = { 0,0 };
 	Flag = 1;
 	Speed = { -1,0 };
 	Size = 1.0f;
@@ -118,6 +123,7 @@ void C_Enemy::Reset()
 void C_Enemy::Hit(int damage)
 {
 	HP -= damage;
+	Clean = 0.3;
 	if (HP <= 0) {
 		Dead();
 	}
@@ -125,7 +131,7 @@ void C_Enemy::Hit(int damage)
 
 void C_Enemy::Dead()
 {
-	Flag = 0;
+	Flag = -1;
 	m_owner->AddScore(500);
 	int tmp = 1;
 	m_owner->DropMP(Pos,tmp);

@@ -15,7 +15,7 @@ public:
 	void Draw()override;
 	void Reset()override;
 
-	void Shot(Math::Vector2 playerPos, int flag);
+	void Shot(Math::Vector2 playerPos, int flag, float Radius,int hp);
 	void Hit(int damage);
 	void SetOwner(C_GameScene* owner) { m_owner = owner; }
 };

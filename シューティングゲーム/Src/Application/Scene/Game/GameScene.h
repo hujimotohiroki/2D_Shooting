@@ -7,6 +7,7 @@ class C_ObjectBase;
 
 struct enemywait {
 	Math::Vector2 pos;
+	int hp;
 	int flag;
 	int timer;
 };
@@ -19,19 +20,25 @@ private:
 	
 	KdTexture backTex1;
 	KdTexture backTex2;
+	KdTexture farTex1;
+	KdTexture farTex2;
 	KdTexture enemyTex;
 	KdTexture mybulletTex;
 	KdTexture enemybulletTex;
 	KdTexture expTex;
 
 	bool BossFlag = false;
-	static const int enemynum = 1;		
+	static const int enemynum = 21;		
 	enemywait enemywaiting[enemynum] ;
 	//背景
 	Math::Matrix backMat1;
-	float backY1;
+	float backX1;
 	Math::Matrix backMat2;
-	float backY2;
+	float backX2;
+	Math::Matrix farMat1;
+	float farX1;
+	Math::Matrix farMat2;
+	float farX2;
 
 	//爆発の変数
 	static const int expnum = enemynum + 2;	//総数（敵機の数+2[ボスと自機]）
@@ -43,6 +50,7 @@ private:
 
 	int bucount;	//敵機を倒した数
 
+	int nowenemy;
 	int nowtime;
 	int shotWait;	//弾のインターバル
 	int score;		//スコア
@@ -73,7 +81,7 @@ public:
 	void EnemyShot(Math::Vector2 EnemyPos, int flag);
 	void EnemySpreadShot(Math::Vector2 EnemyPos, int flag);
 	void EnemySnipeShot(Math::Vector2 EnemyPos, Math::Vector2 playerPos, int flag);
-	void PlayerShot(Math::Vector2 PlayerPos, int flag);
+	void PlayerShot(Math::Vector2 PlayerPos, int flag, float Radius, int hp, float size);
 	void AddScore(int AddScore) { score += AddScore; }
 	void DropMP(Math::Vector2 Pos,int drop);
 	std::vector<std::shared_ptr<C_ObjectBase>> GetObjList() {

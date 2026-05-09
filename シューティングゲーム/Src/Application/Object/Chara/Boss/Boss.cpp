@@ -20,7 +20,7 @@ void C_Boss::Init()
 	Size = 3;	
 	Radius = 96;
 	Timer = 0;
-	Flag = 1;
+	Flag = 0;
 	Tex.Load("Texture/enemy.png");
 	m_objType = ObjectType::Boss;
 }
@@ -66,8 +66,10 @@ void C_Boss::Update()
 
 void C_Boss::Draw()
 {
-	SHADER.m_spriteShader.SetMatrix(Mat);
-	SHADER.m_spriteShader.DrawTex(&Tex, Math::Rectangle{ 0,0, 64, 64 }, 1.0f);
+	if(Flag){
+		SHADER.m_spriteShader.SetMatrix(Mat);
+		SHADER.m_spriteShader.DrawTex(&Tex, Math::Rectangle{ 0,0, 64, 64 }, 1.0f);
+	}
 }
 
 void C_Boss::Reset()

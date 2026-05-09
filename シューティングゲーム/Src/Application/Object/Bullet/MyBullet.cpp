@@ -1,5 +1,5 @@
 #include "MyBullet.h"
-
+#include"../../Scene/Game/GameScene.h"
 void C_MyBullet::Release()
 {}
 
@@ -11,7 +11,7 @@ C_MyBullet::~C_MyBullet()
 
 void C_MyBullet::Init()
 {
-	Pos = { 0,0 };
+	Pos = { 1000,0 };
 	Speed = { 1,0 };
 	MoveSpeed = 20.0f;
 	Size = 1.0f;
@@ -30,9 +30,22 @@ void C_MyBullet::Init()
 void C_MyBullet::Update()
 {
 	if(Flag){
-		Pos += Speed*MoveSpeed;
+		if(Flag==1||Timer>30){
+			Pos += Speed * MoveSpeed;
+		}
 		Timer++;
-		if (abs(Pos.x) > 700) Flag = 0;
+		for (auto& obj : m_owner->GetObjList()) {
+			ObjectType type = obj->GetObjType();
+			if (type == ObjectType::EnemyBullet) {
+				Math::Vector2 v;
+				v = obj->GetPos() - Pos;
+				if (v.Length() < HitRadius + obj->GetHitRadius()) {
+					Hit(obj->GetObjDamage());
+					obj->Hit(Damage);
+				}
+			}
+		}
+		if (abs(Pos.x) > 708) Flag = 0;
 		Math::Matrix trans = Math::Matrix::CreateTranslation(Pos.x, (int)(Pos.y), 0);
 		Math::Matrix scale = Math::Matrix::CreateScale(Size, Size, 0);
 		Math::Matrix rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(Angle));
@@ -56,10 +69,12 @@ void C_MyBullet::Reset()
 	Timer = 0;
 }
 
-void C_MyBullet::Shot(Math::Vector2 playerPos, int flag)
+void C_MyBullet::Shot(Math::Vector2 playerPos, int flag,float Radius,int hp)
 {
 	Pos = playerPos;
 	Flag = flag;
+	Radius = Radius;
+	HP = hp;
 }
 
 void C_MyBullet::Hit(int damage)

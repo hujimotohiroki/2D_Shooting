@@ -4,7 +4,17 @@ C_TitleScene::~C_TitleScene()
 {}
 
 void C_TitleScene::Init()
-{}
+{
+	backTex1.Load("Texture/back.png");
+	backTex2.Load("Texture/back.png");
+	farTex1.Load("Texture/far.png");
+	farTex2.Load("Texture/far.png");
+	titleTex.Load("Texture/Title/cooltext507841107997167.png");
+	backX1 = 0;
+	backX2 = 1277;
+	farX1 = 0;
+	farX2 = 1277;
+}
 
 void C_TitleScene::Release()
 {}
@@ -18,5 +28,36 @@ void C_TitleScene::Update()
 
 void C_TitleScene::Draw2D()
 {
-	
+	SHADER.m_spriteShader.SetMatrix(backMat1);
+	SHADER.m_spriteShader.DrawTex(&backTex1, Math::Rectangle{ 0, 0, 1280, 720 }, 1.0f);
+	SHADER.m_spriteShader.SetMatrix(backMat2);
+	SHADER.m_spriteShader.DrawTex(&backTex2, Math::Rectangle{ 0, 0, 1280, 720 }, 1.0f);
+	SHADER.m_spriteShader.SetMatrix(farMat1);
+	SHADER.m_spriteShader.DrawTex(&farTex1, Math::Rectangle{ 0, 0, 1280, 720 }, 1.0f);
+	SHADER.m_spriteShader.SetMatrix(farMat2);
+	SHADER.m_spriteShader.DrawTex(&farTex2, Math::Rectangle{ 0, 0, 1280, 720 }, 1.0f);
+	Math::Matrix trans = Math::Matrix::CreateTranslation(0, 150, 0);
+	Math::Matrix scale = Math::Matrix::CreateScale(2, 2, 0);
+	Math::Matrix rotate = Math::Matrix::CreateRotationY(0);
+	titleMat = scale * rotate * trans;
+	SHADER.m_spriteShader.SetMatrix(titleMat);
+	SHADER.m_spriteShader.DrawTex(&titleTex, Math::Rectangle{ 0, 0, 435, 72 }, 1.0f);
+
+	if (backX1 < -1277)backX1 = 1277;
+	if (backX2 < -1277)backX2 = 1277;
+	backX1 -= 3;
+	backX2 -= 3;
+	if (farX1 < -1277)farX1 = 1277;
+	if (farX2 < -1277)farX2 = 1277;
+	farX1 -= 3;
+	farX2 -= 3;
+	backMat1 = Math::Matrix::CreateTranslation(backX1, 0, 0);
+	backMat2 = Math::Matrix::CreateTranslation(backX2, 0, 0);
+	farMat1 = Math::Matrix::CreateTranslation(farX1, 0, 0);
+	farMat2 = Math::Matrix::CreateTranslation(farX2, 0, 0);
+	titleMat = Math::Matrix::CreateTranslation(0, 0, 0);
+
+	char text[200];
+	sprintf_s(text, sizeof(text), "Press [ENTER] to start the game.");
+	SHADER.m_spriteShader.DrawString(-300, -228, text, Math::Vector4(1, 1, 0, 1));
 }

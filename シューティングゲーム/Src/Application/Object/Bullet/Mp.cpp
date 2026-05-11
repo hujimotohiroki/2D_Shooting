@@ -24,7 +24,7 @@ void C_Mp::Init()
 	Damage = 0;
 	Timer = 0;
 	Angle = 0;
-	Tex.Load("Texture/bullet/Bullet 24x24 Free Part 4B.png");
+	Tex.Load("Texture/bullet/Bullet 24x24 Part 9B Free.png");
 	m_objType = ObjectType::Mp;
 }
 
@@ -32,6 +32,7 @@ void C_Mp::Update()
 {
 	if (Flag) {
 		Pos+=Speed*MoveSpeed;
+		if (Timer == 10) Speed = { -1,0 };
 		Timer++;
 		if (abs(Pos.x) > 708) Flag = 0;
 		for (auto& obj : m_owner->GetObjList()) {
@@ -53,9 +54,9 @@ void C_Mp::Update()
 void C_Mp::Draw()
 {
 	if (Flag) {
-		Anim = Timer % 8;
+		Anim = (Timer/5 % 8);
 		SHADER.m_spriteShader.SetMatrix(Mat);
-		SHADER.m_spriteShader.DrawTex(&Tex, Math::Rectangle{ 24*Anim, 0, 24, 24 }, 1.0f);
+		SHADER.m_spriteShader.DrawTex(&Tex, Math::Rectangle{ 384+24*Anim, 168, 24, 24 }, 1.0f);
 	}
 }
 
@@ -77,5 +78,5 @@ void C_Mp::Near(Math::Vector2 PlayerPos,int length)
 	Math::Vector2 mpMove = PlayerPos - Pos;
 	//enemyMove.Length();
 	mpMove.Normalize();
-	Pos += mpMove * (200/length);
+	Pos += mpMove * (500/length);
 }

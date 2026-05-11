@@ -7,6 +7,9 @@ class C_Enemy :public C_ObjectBase {
 private:
 	std::shared_ptr<C_EnemyBullet> m_enemybullet;
 	void Release()override;
+	KdTexture enemyTex1;
+	KdTexture enemyTex2;
+	KdTexture enemyTex3;
 public:
 
 	C_Enemy();

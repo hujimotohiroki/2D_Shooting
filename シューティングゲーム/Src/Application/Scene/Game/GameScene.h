@@ -22,12 +22,15 @@ private:
 	KdTexture backTex2;
 	KdTexture farTex1;
 	KdTexture farTex2;
+	KdTexture clearTex;
+	
 	KdTexture enemyTex;
 	KdTexture mybulletTex;
 	KdTexture enemybulletTex;
 	KdTexture expTex;
 
 	bool BossFlag = false;
+	bool playerFlag = false;
 	static const int enemynum = 21;		
 	enemywait enemywaiting[enemynum] ;
 	//背景
@@ -40,6 +43,8 @@ private:
 	Math::Matrix farMat2;
 	float farX2;
 
+	Math::Matrix clearMat;
+
 	//爆発の変数
 	static const int expnum = enemynum + 2;	//総数（敵機の数+2[ボスと自機]）
 	Math::Matrix expMat[expnum];			//座標回転拡縮を管理する行列
@@ -50,10 +55,18 @@ private:
 
 	int bucount;	//敵機を倒した数
 
+	int wall;
+
+	int PrevEnemy1;
+	int PrevEnemy2;
+	int PrevEnemy3;
+
 	int nowenemy;
 	int nowtime;
 	int shotWait;	//弾のインターバル
 	int score;		//スコア
+
+	bool clearflag;
 	std::vector<std::shared_ptr<C_ObjectBase>> m_objList;
 	
 protected:
@@ -78,15 +91,16 @@ public:
 
 	void Explosion(float x, float y);
 
-	void EnemyShot(Math::Vector2 EnemyPos, int flag);
+	void EnemyShot(Math::Vector2 EnemyPos, int flag,int angle);
 	void EnemySpreadShot(Math::Vector2 EnemyPos, int flag);
 	void EnemySnipeShot(Math::Vector2 EnemyPos, Math::Vector2 playerPos, int flag);
-	void PlayerShot(Math::Vector2 PlayerPos, int flag, float Radius, int hp, float size);
+	void PlayerShot(Math::Vector2 PlayerPos, int flag, float Radius, int hp, float size,int angle);
 	void AddScore(int AddScore) { score += AddScore; }
 	void DropMP(Math::Vector2 Pos,int drop);
 	std::vector<std::shared_ptr<C_ObjectBase>> GetObjList() {
 		return m_objList;
 	}
-	
-	void LoadEnemy();
+	void SetPlayerFlag(bool flag) { playerFlag = flag; }
+	void SetBossFlag(bool flag);
+	int GetWall() { return wall; }
 };

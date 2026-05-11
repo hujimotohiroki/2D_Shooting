@@ -31,7 +31,6 @@ public:
 	void SetDamage(int damage) { Damage = damage; }
 	float GetHitRadius() { return HitRadius; }
 	float GetRadius() { return Radius; }
-	void SetHP(int hp) { HP = hp; }
 	void SetOwner(C_GameScene* owner) { m_owner = owner; }
 	ObjectType GetObjType() { return m_objType; }
 	int GetObjDamage() { return Damage; }

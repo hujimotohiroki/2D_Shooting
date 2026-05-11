@@ -17,7 +17,7 @@ void C_Enemy::Init()
 	Flag = 0;
 	Speed = {-1, 0};
 	MoveSpeed = 5.0f;
-	Size = 1.0f;
+	Size = 2.0f;
 	Radius = 32.0f;
 	HitRadius = 32.0f;
 	HitDiff = { 0,0 };
@@ -27,7 +27,7 @@ void C_Enemy::Init()
 	Timer = 0;
 	PrevShot = 0;
 	Clean = 1.0;
-	Tex.Load("Texture/enemy.png");
+	enemyTex1.Load("Texture/enemy/Book_Small_Grey.png");
 	m_objType = ObjectType::Enemy;
 }
 
@@ -36,21 +36,21 @@ void C_Enemy::Update()
 	Clean = 1.0f;
 	switch (Flag) {
 	case 1:
-		if (Timer < 60) {
+		if (Timer < 90) {
 			Pos += Speed * MoveSpeed;
 		}
-		if (Timer > 90 && Timer - PrevShot >= 10) {
-			m_owner->EnemyShot(Pos, Flag);
+		if (Timer > 120 && Timer - PrevShot >= 120/m_owner->GetWall()) {
+			m_owner->EnemyShot(Pos, Flag,180);
 			PrevShot = Timer;
 		}
-		if (Timer > 210) {
+		if (Timer > 180) {
 			Pos += Speed * MoveSpeed;
-			if (Pos.x < -608) Flag=0;
 		}
+		if (Pos.x < -608) Flag=0;
 		break;
 	case 2:
 		Pos += Speed * MoveSpeed;
-		if (Timer > 120 && Timer - PrevShot >= 10) {
+		if (Timer > 120 && Timer - PrevShot >= 120 / m_owner->GetWall()) {
 			for (auto& obj : m_owner->GetObjList()) {
 				ObjectType type = obj->GetObjType();
 				if (type == ObjectType::Player) {
@@ -66,7 +66,7 @@ void C_Enemy::Update()
 		if (Timer < 60) {
 			Pos += Speed * MoveSpeed;
 		}
-		else if (Timer > 90 && Timer < 420 && Timer - PrevShot >= 3) {
+		else if (Timer > 90 && Timer < 420 && Timer - PrevShot >= 10) {
 			m_owner->EnemySpreadShot(Pos, Flag);
 			PrevShot = Timer;
 		}
@@ -98,14 +98,17 @@ void C_Enemy::Update()
 		Pos += Speed;
 		if (Pos.y < -392) Flag = 0;
 	}
-	Mat = Math::Matrix::CreateTranslation(Pos.x, Pos.y, 0);
+	Math::Matrix trans = Math::Matrix::CreateTranslation(Pos.x, (int)(Pos.y), 0);
+	Math::Matrix scale = Math::Matrix::CreateScale(Size, Size, 0);
+	Math::Matrix rotate = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(180));
+	Mat = scale * rotate * trans;
 }
 
 void C_Enemy::Draw()
 {
 	if (Flag != 0) {
 		SHADER.m_spriteShader.SetMatrix(Mat);
-		SHADER.m_spriteShader.DrawTex(&Tex, Math::Rectangle{ 0, 0, 64, 64 }, Clean);
+		SHADER.m_spriteShader.DrawTex(&enemyTex1, Math::Rectangle{ 0, 0, 32, 32 }, Clean);
 	}
 }
 
@@ -133,6 +136,6 @@ void C_Enemy::Dead()
 {
 	Flag = -1;
 	m_owner->AddScore(500);
-	int tmp = 1;
+	int tmp = 3;
 	m_owner->DropMP(Pos,tmp);
 }

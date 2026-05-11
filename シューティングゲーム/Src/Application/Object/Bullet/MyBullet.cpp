@@ -23,7 +23,7 @@ void C_MyBullet::Init()
 	Damage = 1;
 	Timer = 0;
 	Angle = 0;
-	Tex.Load("Texture/bullet.png");
+	Tex.Load("Texture/bullet/Bullet 24x24 Part 5B Free.png");
 	m_objType = ObjectType::MyBullet;
 }
 
@@ -57,7 +57,7 @@ void C_MyBullet::Draw()
 {
 	if(Flag){
 		SHADER.m_spriteShader.SetMatrix(Mat);
-		SHADER.m_spriteShader.DrawTex(&Tex, Math::Rectangle{ 0, 0, 16, 16 }, 1.0f);
+		SHADER.m_spriteShader.DrawTex(&Tex, Math::Rectangle{ 0, 48, 24, 24 }, 1.0f);
 	}
 }
 

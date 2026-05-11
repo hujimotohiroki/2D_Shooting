@@ -11,11 +11,24 @@ private:
 	int Mp;
 	int MaxMP;
 	int Lv;
-	const int MaxLV=10;
+	const int MaxLV=5;
+	int PrevXKey;
 	KdTexture m_hpBarFrameTex;
 	KdTexture m_hpBarTex;
 	KdTexture m_mpBarFrameTex;
 	KdTexture m_mpBarTex;
+	KdTexture keyTex;
+	KdTexture m_skillTex;
+	KdTexture skillTex1;
+	KdTexture skillTex2;
+	KdTexture skillTex3;
+	KdTexture skillTex4;
+	Math::Matrix skillMat1;
+	Math::Matrix skillMat2;
+	Math::Matrix skillMat3;
+	Math::Matrix keyMat1;
+	Math::Matrix keyMat2;
+	Math::Matrix keyMat3;
 public:
 
 	C_Player();

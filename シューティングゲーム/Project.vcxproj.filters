@@ -55,9 +55,6 @@
     <Filter Include="Src\Application\Scene\Title">
       <UniqueIdentifier>{e31597b5-36aa-4dec-ad02-afea9e930195}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\Scene\Game\GameScene">
-      <UniqueIdentifier>{b013a104-8893-4ce2-ade0-3dbc5e694431}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\Object">
       <UniqueIdentifier>{b0bab70a-a1bf-4af4-8150-bde2fc5c7c19}</UniqueIdentifier>
     </Filter>
@@ -186,9 +183,6 @@
     <ClInclude Include="Src\Application\Scene\SceneManager.h">
       <Filter>Src\Application\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\Scene\Game\GameScene\Hit.h">
-      <Filter>Src\Application\Scene\Game\GameScene</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\Object\ObjectBase.h">
       <Filter>Src\Application\Object</Filter>
     </ClInclude>
@@ -209,6 +203,9 @@
     </ClInclude>
     <ClInclude Include="Src\Application\Object\Chara\Player\Player.h">
       <Filter>Src\Application\Object\Chara\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Object\Chara\Boss\wall.h">
+      <Filter>Src\Application\Object\Chara\Boss</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -290,9 +287,6 @@
     <ClCompile Include="Src\Application\Scene\SceneManager.cpp">
       <Filter>Src\Application\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\Scene\Game\GameScene\Hit.cpp">
-      <Filter>Src\Application\Scene\Game\GameScene</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\Object\ObjectBase.cpp">
       <Filter>Src\Application\Object</Filter>
     </ClCompile>
@@ -313,6 +307,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\Object\Chara\Player\Player.cpp">
       <Filter>Src\Application\Object\Chara\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Object\Chara\Boss\Wall.cpp">
+      <Filter>Src\Application\Object\Chara\Boss</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

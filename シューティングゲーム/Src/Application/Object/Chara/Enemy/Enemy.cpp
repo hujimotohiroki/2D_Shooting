@@ -28,6 +28,8 @@ void C_Enemy::Init()
 	PrevShot = 0;
 	Clean = 1.0;
 	enemyTex1.Load("Texture/enemy/Book_Small_Grey.png");
+	enemyTex2.Load("Texture/enemy/Book_Small_Grey.png");
+	enemyTex3.Load("Texture/enemy/Book_Small_Grey.png");
 	m_objType = ObjectType::Enemy;
 }
 
@@ -36,21 +38,16 @@ void C_Enemy::Update()
 	Clean = 1.0f;
 	switch (Flag) {
 	case 1:
-		if (Timer < 90) {
-			Pos += Speed * MoveSpeed;
-		}
-		if (Timer > 120 && Timer - PrevShot >= 120/m_owner->GetWall()) {
+		Pos += Speed * MoveSpeed;
+		if (Timer > 30 && Timer - PrevShot >= 60/m_owner->GetWall()) {
 			m_owner->EnemyShot(Pos, Flag,180);
 			PrevShot = Timer;
-		}
-		if (Timer > 180) {
-			Pos += Speed * MoveSpeed;
 		}
 		if (Pos.x < -608) Flag=0;
 		break;
 	case 2:
 		Pos += Speed * MoveSpeed;
-		if (Timer > 120 && Timer - PrevShot >= 120 / m_owner->GetWall()) {
+		if (Timer > 30 && Timer - PrevShot >= 60 / m_owner->GetWall()) {
 			for (auto& obj : m_owner->GetObjList()) {
 				ObjectType type = obj->GetObjType();
 				if (type == ObjectType::Player) {
@@ -91,6 +88,7 @@ void C_Enemy::Update()
 				}
 			}
 		}
+		if(m_owner)
 		Timer++;
 	}
 	if (Flag == -1) {
@@ -106,9 +104,17 @@ void C_Enemy::Update()
 
 void C_Enemy::Draw()
 {
-	if (Flag != 0) {
-		SHADER.m_spriteShader.SetMatrix(Mat);
+	SHADER.m_spriteShader.SetMatrix(Mat);
+	switch (Flag) {
+	case 1:
 		SHADER.m_spriteShader.DrawTex(&enemyTex1, Math::Rectangle{ 0, 0, 32, 32 }, Clean);
+		break;
+	case 2:
+		SHADER.m_spriteShader.DrawTex(&enemyTex2, Math::Rectangle{ 0, 0, 32, 32 }, Clean);
+		break;
+	case 3:
+		SHADER.m_spriteShader.DrawTex(&enemyTex3, Math::Rectangle{ 0, 0, 32, 32 }, Clean);
+		break;
 	}
 }
 
@@ -135,7 +141,7 @@ void C_Enemy::Hit(int damage)
 void C_Enemy::Dead()
 {
 	Flag = -1;
-	m_owner->AddScore(500);
+	if(Timer<100) m_owner->AddScore(100-Timer);
 	int tmp = 3;
 	m_owner->DropMP(Pos,tmp);
 }

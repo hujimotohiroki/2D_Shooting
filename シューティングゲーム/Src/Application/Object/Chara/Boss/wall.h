@@ -1,31 +1,17 @@
 #pragma once
 #include"../../ObjectBase.h"
 class C_ObjectBase;
-class C_Boss :public C_ObjectBase {
+class C_Wall :public C_ObjectBase {
 private:
 	void Release()override;
-
+	Math::Matrix WallCoreMat;
 	KdTexture m_hpBarFrameTex;
 	KdTexture m_hpBarTex;
-
-	KdTexture mahouzinTex;
-	Math::Matrix mahouzinMat;
-	float mahouzinSize;
-	int mahouzinTimer;
-	Math::Vector2 mahouzinPos;
-
-	bool wallFlag;
-	int wall;
-	bool mahouzinFlag;
-
-	int PrevEnemy1;
-	int PrevEnemy2;
-	int PrevEnemy3;
-
+	KdTexture WallCoreTex;
 public:
 
-	C_Boss();
-	~C_Boss()override;
+	C_Wall();
+	~C_Wall()override;
 	void Init()override;
 	void Update()override;
 	void Draw()override;

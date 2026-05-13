@@ -15,7 +15,6 @@ struct enemywait {
 class C_GameScene : public C_BaseScene
 {
 private:
-	
 	// テクスチャ ・・・ 画像データ
 	
 	KdTexture backTex1;
@@ -23,10 +22,12 @@ private:
 	KdTexture farTex1;
 	KdTexture farTex2;
 	KdTexture clearTex;
+	KdTexture gameoverTex;
+	KdTexture clearTex2;
+	KdTexture gameoverTex2;
+	KdTexture keyTex;
+	KdTexture dangerTex;
 	
-	KdTexture enemyTex;
-	KdTexture mybulletTex;
-	KdTexture enemybulletTex;
 	KdTexture expTex;
 
 	bool BossFlag = false;
@@ -44,6 +45,11 @@ private:
 	float farX2;
 
 	Math::Matrix clearMat;
+	Math::Matrix gameoverMat;
+	Math::Matrix clearMat2;
+	Math::Matrix gameoverMat2;
+	Math::Matrix keyMat;
+	Math::Matrix dangerMat;
 
 	//爆発の変数
 	static const int expnum = enemynum + 2;	//総数（敵機の数+2[ボスと自機]）
@@ -57,9 +63,7 @@ private:
 
 	int wall;
 
-	int PrevEnemy1;
-	int PrevEnemy2;
-	int PrevEnemy3;
+	
 
 	int nowenemy;
 	int nowtime;
@@ -95,6 +99,8 @@ public:
 	void EnemySpreadShot(Math::Vector2 EnemyPos, int flag);
 	void EnemySnipeShot(Math::Vector2 EnemyPos, Math::Vector2 playerPos, int flag);
 	void PlayerShot(Math::Vector2 PlayerPos, int flag, float Radius, int hp, float size,int angle);
+	
+	void SummonEnemy(int Hp, int flag);
 	void AddScore(int AddScore) { score += AddScore; }
 	void DropMP(Math::Vector2 Pos,int drop);
 	std::vector<std::shared_ptr<C_ObjectBase>> GetObjList() {
@@ -103,4 +109,7 @@ public:
 	void SetPlayerFlag(bool flag) { playerFlag = flag; }
 	void SetBossFlag(bool flag);
 	int GetWall() { return wall; }
+	void SetWall(int Wall) { wall = Wall; }
+	void SpawnWall(int wall);
+	bool GetClearFlag(){ return clearflag; }
 };

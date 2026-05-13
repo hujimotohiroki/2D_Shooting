@@ -34,14 +34,16 @@ void C_MyBullet::Update()
 			Pos += Speed * MoveSpeed;
 		}
 		Timer++;
-		for (auto& obj : m_owner->GetObjList()) {
-			ObjectType type = obj->GetObjType();
-			if (type == ObjectType::EnemyBullet) {
-				Math::Vector2 v;
-				v = obj->GetPos() - Pos;
-				if (v.Length() < HitRadius + obj->GetHitRadius()) {
-					Hit(obj->GetObjDamage());
-					obj->Hit(Damage);
+		if(Size>3.0f){
+			for (auto& obj : m_owner->GetObjList()) {
+				ObjectType type = obj->GetObjType();
+				if (type == ObjectType::EnemyBullet) {
+					Math::Vector2 v;
+					v = obj->GetPos() - Pos;
+					if (v.Length() < HitRadius + obj->GetHitRadius()) {
+						Hit(obj->GetObjDamage());
+						obj->Hit(Damage);
+					}
 				}
 			}
 		}

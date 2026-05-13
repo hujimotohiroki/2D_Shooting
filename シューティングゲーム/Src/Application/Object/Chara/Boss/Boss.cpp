@@ -12,30 +12,78 @@ C_Boss::~C_Boss()
 
 void C_Boss::Init()
 {
-	Pos = { 800,100 };
+	Pos = { 800,0 };
 	HP = 100;
 	MaxHP = HP;
-	Damage = 10;
-	Size = 15;	
-	Radius = 96;
-	HitRadius = 96;
+	Damage = 50;
+	Size = 4.0f;	
+	Radius = 64.0f;
+	HitRadius = 16.0f;
 	HitDiff = { 0,0 };
 	Timer = 0;
 	Flag = 0;
-	Tex.Load("Texture/wall.png");
+	wall = 0;
+	wallFlag = false;
+	Tex.Load("Texture/Player/player.png");
 	m_hpBarFrameTex.Load("Texture/UI/hp bar/1.png");
 	m_hpBarTex.Load("Texture/UI/hp bar/5.png");
 	m_objType = ObjectType::Boss;
+
+	mahouzinTex.Load("Texture/magic circle.png");
+	mahouzinSize = 1.0f;
+	mahouzinTimer = 0;
+	mahouzinFlag = false;
+	mahouzinPos = { 0,0 };
 }
 
 void C_Boss::Update()
 {
 	if (Flag == 1) {
+		wall = m_owner->GetWall();
+		if (Timer > 240 && wallFlag == false && mahouzinTimer > 90) {
+			wall++;
+			m_owner->SpawnWall(wall);
+			wallFlag = true;
+			mahouzinFlag = false;
+			mahouzinTimer = 0;
+		}
+		if (Timer > 150 && wallFlag == false) {
+			if(!mahouzinFlag)
+			{
+				mahouzinPos = { 0,0 };
+				mahouzinSize = 1.0f;
+				mahouzinTimer = 0;
+				mahouzinFlag = true;
+			}
+			mahouzinSize *= 1.02f;
+			if (mahouzinSize > 2.5f) mahouzinSize = 2.5f;
+			mahouzinTimer++;
+			mahouzinPos.x -= 3.0f;
+			if (mahouzinPos.x < -200.0f)mahouzinPos.x = -200.0f;
+		}
+		m_owner->SetWall(wall);
+		if(wall!=0){
+			if (Timer - PrevEnemy1 >= 100 / wall) {
+				m_owner->SummonEnemy(3, 1);
+				PrevEnemy1 = Timer - (rand() % 3);
+			}
+			if (Timer - PrevEnemy2 >= 100 / wall) {
+				m_owner->SummonEnemy(3, 2);
+				PrevEnemy2 = Timer - (rand() % 3);
+			}
+			if (wall > 2) {
+				if (Timer - PrevEnemy3 >= 3000) {
+					m_owner->SummonEnemy(20, 3);
+					PrevEnemy3 = Timer - (rand() % 3);
+				}
+			}
+		}
 		//Angle++;
 		//if (Angle >= 360) Angle -= 360;
 		Clean = 1.0f;
 		Pos.x -= 2.0f;
-		if (Pos.x < 525)Pos.x = 525;
+		if (Pos.x < 500)Pos.x = 500;
+		bool tmp=false;
 		for (auto& obj : m_owner->GetObjList()) {
 			ObjectType type = obj->GetObjType();
 			if (type == ObjectType::MyBullet) {
@@ -46,21 +94,42 @@ void C_Boss::Update()
 					obj->Hit(Damage);
 				}
 			}
+			if (obj->GetObjType() == ObjectType::Wall) tmp = true;
+		}
+		if (!tmp) {
+			wallFlag = false;
+			if(Timer>150)mahouzinFlag = true;
+		}
+		Timer++;
+	}
+	if (Flag == -1) {
+		Speed.y -= 1;
+		Pos += Speed;
+		if (Pos.y < -392)
+		{
+			Flag = 0;
+			m_owner->SetBossFlag(false);
 		}
 	}
 	Math::Matrix trans = Math::Matrix::CreateTranslation(Pos.x, (int)(Pos.y), 0);
 	Math::Matrix scale = Math::Matrix::CreateScale(Size, Size, 0);
 	Math::Matrix rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(0));
 	Mat = scale * rotate * trans;
+	trans = Math::Matrix::CreateTranslation(Pos.x+mahouzinPos.x, (int)(Pos.y+mahouzinPos.y), 0);
+	scale = Math::Matrix::CreateScale(mahouzinSize, mahouzinSize, 0);
+	rotate = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(Timer*3));
+	mahouzinMat= scale * rotate * trans;
 }
 
 void C_Boss::Draw()
 {
+	if (mahouzinFlag) {
+		SHADER.m_spriteShader.SetMatrix(mahouzinMat);
+		SHADER.m_spriteShader.DrawTex(&mahouzinTex, Math::Rectangle{ 0, 0, 64, 64 }, Clean);
+	}
 	if(Flag){
 		SHADER.m_spriteShader.SetMatrix(Mat);
-		SHADER.m_spriteShader.DrawTex(&Tex, Math::Rectangle{ 16, 24, 16, 40 }, Clean);
-		Math::Color color = { 0,0.5f,0,0.1f };
-		SHADER.m_spriteShader.DrawCircle(HitDiff.x, HitDiff.y, 6, &color, true);
+		SHADER.m_spriteShader.DrawTex(&Tex, Math::Rectangle{ 0, 0, 32, 32 }, Clean);
 		DrawHpBar();
 	}
 }
@@ -84,11 +153,7 @@ void C_Boss::Hit(int damage)
 
 void C_Boss::Dead()
 {
-	Flag = 0;
-	m_owner->AddScore(500);
-	int tmp = 30;
-	m_owner->DropMP(Pos, tmp);
-	m_owner->SetBossFlag(false);
+	Flag = -1;
 }
 
 void C_Boss::DrawHpBar()

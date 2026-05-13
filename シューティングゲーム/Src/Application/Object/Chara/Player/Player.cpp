@@ -24,15 +24,19 @@ void C_Player::Init()
 	HitDiff = { 24,-44 };
 	HP = 50;
 	MaxHP = HP;
-	Mp = 0;
+	MP = 0;
 	MaxMP = 20;
+	MaxMPFlag = false;
+	MaxMPTimer = -300;
 	Lv = 1;
 	Damage = 5;
 	Timer = -180;
+	Angle = 0;
 	PrevShot = 0;
 	PrevXKey = 0;
 	Clean = 1.0f;
-	Tex.Load("Texture/player.png");
+	Tex.Load("Texture/Player/player.png");
+	MaxMPTex.Load("Texture/Player/mp max.png");
 	m_hpBarFrameTex.Load("Texture/UI/hp bar/1.png");
 	m_hpBarTex.Load("Texture/UI/hp bar/5.png");
 	m_mpBarFrameTex.Load("Texture/UI/mp bar/1.png");
@@ -43,12 +47,14 @@ void C_Player::Init()
 	skillTex4.Load("Texture/UI/Skill Icon/Bomb.png");
 	keyTex.Load("Texture/UI/icons-keyboard-16x16-1bit-ansdor.png");
 	m_skillTex.Load("Texture/UI/mp bar/skill.png");
+	underbarTex.Load("Texture/UI/underbar.png");
 	m_objType = ObjectType::Player;
 }
 
 void C_Player::Update()
 {
 	Clean = 1.0f;
+	Angle = 0;
 	if(Flag>0&&Timer>0){
 		MoveSpeed = 10.0f;
 		if (GetAsyncKeyState(VK_SHIFT) & 0x8000) {
@@ -56,9 +62,11 @@ void C_Player::Update()
 		}
 		if (GetAsyncKeyState(VK_RIGHT) & 0x8000) {
 			Pos.x += MoveSpeed;
+			Angle = -5;
 		}
 		if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
 			Pos.x -= MoveSpeed;
+			Angle = 5;
 		}
 		if (GetAsyncKeyState(VK_UP) & 0x8000) {
 			Pos.y += MoveSpeed;
@@ -77,60 +85,58 @@ void C_Player::Update()
 				break;
 			case 2:
 				if (Timer - PrevShot >= 5) {
-					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,-15);
-					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,15);
+					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,-5);
+					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,5);
 					PrevShot = Timer;
 				}
 				break;
 			case 3:
 				if (Timer - PrevShot >= 4) {
-					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,-30);
+					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,-10);
 					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,0);
-					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,30);
+					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,10);
 					PrevShot = Timer;
 				}
 				break;
 			case 4:
 				if (Timer - PrevShot >= 4) {
-					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,-30);
-					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,-10);
-					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,10);
-					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,30);
+					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,-15);
+					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,-5);
+					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,5);
+					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,15);
 					PrevShot = Timer;
 				}
 				break;
 			case 5:
 				if (Timer - PrevShot >= 3) {
-					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,-30);
-					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,-15);
+					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,-20);
+					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,-10);
 					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,0);
-					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,15);
-					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,30);
+					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,10);
+					m_owner->PlayerShot(Pos, Flag, 8.0f, 1, 1.0f,20);
 					PrevShot = Timer;
 				}
 				break;
 			}
 		}
 		if (GetAsyncKeyState('X') & 0x8000) {
-			if (Mp >= 10&&Timer-PrevXKey>=30) {
-				if (Timer - PrevShot >= 5) {
-					Mp -= 15;
-					m_owner->PlayerShot(Pos, Flag, 32.0f, 100, 4.0f,0);
-					PrevShot = Timer;
-				}
+			if (MP >= 10&&Timer-PrevXKey>=30) {
+					MP -= 15;
+					m_owner->PlayerShot(Pos, Flag, 32.0f, 1000, 4.0f,0);
+					PrevXKey = Timer;
 				
 			}
 		}
 		if (GetAsyncKeyState('C') & 0x8000) {
-			if (Mp >= 30) {
-				Mp -= 30;
+			if (MP >= 30) {
+				MP -= 30;
 				HP += MaxHP / 3.0f;
 			}
 		}
 		if (GetAsyncKeyState('V') & 0x8000) {
 			//LvUpのプログラム
-			if (Mp == MaxMP) {
-				Mp = 0;
+			if (MP == MaxMP) {
+				MP = 0;
 				if (Lv != MaxLV) {
 					Lv++;
 					MaxMP *= 1.5f; 
@@ -143,7 +149,7 @@ void C_Player::Update()
 						if (type == ObjectType::Mp) {
 							Math::Vector2 v;
 							v = obj->GetPos() - Pos;
-							if (v.Length() < 500) {
+							if (v.Length() < 300) {
 								m_owner->PlayerShot(obj->GetPos(), 2, 8.0f, 1, 1.0f,0);
 								obj->Hit(Damage);
 							}
@@ -151,6 +157,10 @@ void C_Player::Update()
 					}
 				}
 			}
+		}
+		if (GetAsyncKeyState('M') & 0x8000) {
+			MP = MaxMP;
+			HP = MaxHP;
 		}
 		if (Pos.x > 592 + HitDiff.x) Pos.x = 592 + HitDiff.x;
 		if (Pos.x < -592 + HitDiff.x)Pos.x = -592 + HitDiff.x;
@@ -173,6 +183,12 @@ void C_Player::Update()
 				}
 			}
 		}
+		if (MaxMPFlag) {
+			MaxMPFlag = false;
+			MaxMPTimer = Timer;
+			MaxMPPos = Pos;
+			MaxMPPos.y += Radius;
+		}
 	}
 	Timer++;
 	if (Flag == -1) {
@@ -186,14 +202,20 @@ void C_Player::Update()
 	}
 	Math::Matrix trans = Math::Matrix::CreateTranslation(Pos.x-HitDiff.x, (int)(Pos.y)-HitDiff.y, 0);
 	Math::Matrix scale = Math::Matrix::CreateScale(Size, Size, 0);
-	Math::Matrix rotate = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(180));
-	Mat = scale * rotate * trans;
+	Math::Matrix rotateY = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(180));
+	Math::Matrix rotateZ = Math::Matrix::CreateRotationZ(DirectX::XMConvertToRadians(Angle));
+	Mat = scale * rotateY*rotateZ * trans;
 	skillMat1 = Math::Matrix::CreateTranslation(360, -300, 0);
 	skillMat2 = Math::Matrix::CreateTranslation(470, -300, 0);
 	skillMat3 = Math::Matrix::CreateTranslation(580, -300, 0);
 	keyMat1 = Math::Matrix::CreateTranslation(360, -255, 0);
 	keyMat2 = Math::Matrix::CreateTranslation(470, -255, 0);
 	keyMat3 = Math::Matrix::CreateTranslation(580, -255, 0);
+
+	if (Timer - MaxMPTimer < 30) {
+		MaxMPPos.y += 2;
+		MaxMPMat= Math::Matrix::CreateTranslation(MaxMPPos.x, MaxMPPos.y, 0);
+	}
 }
 
 void C_Player::Draw()
@@ -204,27 +226,40 @@ void C_Player::Draw()
 		DrawHpBar();
 		DrawMpBar();
 	}
-	
+
+	if (MP >= 10)Clean = 1.0f;
+	else Clean = 0.5f;
 	SHADER.m_spriteShader.SetMatrix(skillMat1);
-	SHADER.m_spriteShader.DrawTex(&skillTex1, Math::Rectangle{ 0, 0, 96, 96 }, 1.0f);
+	SHADER.m_spriteShader.DrawTex(&skillTex1, Math::Rectangle{ 0, 0, 96, 96 }, Clean);
 	SHADER.m_spriteShader.SetMatrix(keyMat1);
 	SHADER.m_spriteShader.DrawTex(&keyTex, Math::Rectangle{ 128, 16, 16, 16 }, 1.0f);
+
+	if (MP >= 30)Clean = 1.0f;
+	else Clean = 0.5f;
 	SHADER.m_spriteShader.SetMatrix(skillMat2);
-	SHADER.m_spriteShader.DrawTex(&skillTex2, Math::Rectangle{ 0, 0, 96, 96 }, 1.0f);
+	SHADER.m_spriteShader.DrawTex(&skillTex2, Math::Rectangle{ 0, 0, 96, 96 }, Clean);
 	SHADER.m_spriteShader.SetMatrix(keyMat2);
 	SHADER.m_spriteShader.DrawTex(&keyTex, Math::Rectangle{ 144, 16, 16, 16 }, 1.0f);
+
+	if (MP >= MaxMP)Clean = 1.0f;
+	else Clean = 0.5f;
 	if(Lv!=MaxLV)
 		{
 			SHADER.m_spriteShader.SetMatrix(skillMat3);
-			SHADER.m_spriteShader.DrawTex(&skillTex3, Math::Rectangle{ 0, 0, 96, 96 }, 1.0f);
+			SHADER.m_spriteShader.DrawTex(&skillTex3, Math::Rectangle{ 0, 0, 96, 96 }, Clean);
 		}
 		else
 		{
 			SHADER.m_spriteShader.SetMatrix(skillMat3);
-			SHADER.m_spriteShader.DrawTex(&skillTex4, Math::Rectangle{ 0, 0, 96, 96 }, 1.0f);
+			SHADER.m_spriteShader.DrawTex(&skillTex4, Math::Rectangle{ 0, 0, 96, 96 }, Clean);
 		}
 	SHADER.m_spriteShader.SetMatrix(keyMat3);
 	SHADER.m_spriteShader.DrawTex(&keyTex, Math::Rectangle{ 160, 16, 16, 16 }, 1.0f);
+
+	if (Timer - MaxMPTimer < 30) {
+		SHADER.m_spriteShader.SetMatrix(MaxMPMat);
+		SHADER.m_spriteShader.DrawTex(&MaxMPTex, Math::Rectangle{ 0, 0, 127, 44 }, 1.0f);
+	}
 }
 
 void C_Player::Reset()
@@ -247,28 +282,37 @@ void C_Player::Dead()
 	Flag = -1;
 }
 
+void C_Player::AddMp()
+{
+	if (MP < MaxMP)
+	{
+		MP++;
+		if (MP == MaxMP)MaxMPFlag = true;
+	}
+}
+
 void C_Player::DrawHpBar()
 {
-	float maxWidth = 520.0f;
-	float height = 20.0f;
+	float maxWidth = 100.0f;
+	float height = 10.0f;
 
 	float rate = float(HP) / float(MaxHP);
 	if (rate < 0) rate = 0;
 	if (rate > 1) rate = 1;
 
-	float x = -300;
-	float y = 320;
+	float x = 0;
+	float y = 120;
 
 	// =============================
 	// ① フレーム描画
 	// =============================
 	{
-		Math::Matrix scale = Math::Matrix::CreateScale(1.0f, 2.0f, 0);
-		Math::Matrix trans = Math::Matrix::CreateTranslation(x, y, 0);
+		Math::Matrix scale = Math::Matrix::CreateScale(1.0f, 1.0f, 0);
+		Math::Matrix trans = Math::Matrix::CreateTranslation(Pos.x+x, Pos.y+y, 0);
 		Math::Matrix mat = scale * trans;
 		SHADER.m_spriteShader.SetMatrix(mat);
 
-		Math::Rectangle frameRect{ 0,0,520,10 };	
+		Math::Rectangle frameRect{ 0,0,100,10 };
 		SHADER.m_spriteShader.DrawTex(&m_hpBarFrameTex, frameRect, 1.0f);
 	}
 
@@ -282,15 +326,15 @@ void C_Player::DrawHpBar()
 		float anchorOffset = maxWidth * 0.5f;   // 中心から左端への距離
 
 		Math::Matrix moveToRight = Math::Matrix::CreateTranslation(anchorOffset, 0, 0);
-		Math::Matrix scale = Math::Matrix::CreateScale(rate, 2.0f, 0);
+		Math::Matrix scale = Math::Matrix::CreateScale(rate, 1.0f, 0);
 		Math::Matrix moveBack = Math::Matrix::CreateTranslation(-anchorOffset, 0, 0);
 
-		Math::Matrix moveToPos = Math::Matrix::CreateTranslation(x, y, 0);
+		Math::Matrix moveToPos = Math::Matrix::CreateTranslation(Pos.x + x, Pos.y + y, 0);
 
 		Math::Matrix mat =  moveToRight  *scale* moveBack * moveToPos;
 		SHADER.m_spriteShader.SetMatrix(mat);
 
-		Math::Rectangle src{ 0,0,520,10 };
+		Math::Rectangle src{ 0,0,100,10 };
 		SHADER.m_spriteShader.DrawTex(&m_hpBarTex, src, 1.0f);
 	}
 }
@@ -300,7 +344,7 @@ void C_Player::DrawMpBar()
 	float maxWidth = 310.0f;
 	float height = 20.0f;
 
-	float rate = float(Mp) / float(MaxMP);
+	float rate = float(MP) / float(MaxMP);
 	if (rate < 0) rate = 0;
 	if (rate > 1) rate = 1;
 

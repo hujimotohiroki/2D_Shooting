@@ -3,6 +3,7 @@
 #include "../../Object/Chara/Player/Player.h"
 #include "../../Object/Chara/Enemy/Enemy.h"
 #include "../../Object/Chara/Boss/Boss.h"
+#include "../../Object/Chara/Boss/Wall.h"
 #include "../../Object/Bullet/Mybullet.h"
 #include "../../Object/Bullet/Enemybullet.h"
 #include "../../Object/Bullet/Mp.h"
@@ -32,18 +33,30 @@ void C_GameScene::Draw2D()
 	SHADER.m_spriteShader.DrawTex(&farTex2, Math::Rectangle{ 0, 0, 1280, 720 }, 1.0f);
 	
 
-	rep(i,m_objList.size()) {
+	for (int i = m_objList.size() - 1;i >= 0; i--) {
 		m_objList[i]->Draw();
 	}
 	
+	if (nowtime < 0 && (nowtime/20) % 2 == 0) {
+		SHADER.m_spriteShader.SetMatrix(dangerMat);
+		SHADER.m_spriteShader.DrawTex(&dangerTex, Math::Rectangle{ 0, 0, 276, 74 }, 1.0f);
+	}
+
 	if(!playerFlag){
-		SHADER.m_spriteShader.DrawString(-100, 50, "GAMEOVER", Math::Vector4(1, 1, 0, 1));
-		SHADER.m_spriteShader.DrawString(-300, -150, "Press [Q] to return to title", Math::Vector4(1, 1, 0, 1));
+		SHADER.m_spriteShader.SetMatrix(gameoverMat);
+		SHADER.m_spriteShader.DrawTex(&gameoverTex, Math::Rectangle{ 0, 0, 373, 72 }, 1.0f);
+		SHADER.m_spriteShader.SetMatrix(gameoverMat2);
+		SHADER.m_spriteShader.DrawTex(&gameoverTex2, Math::Rectangle{ 0, 0, 847, 87 }, 1.0f);
+		SHADER.m_spriteShader.SetMatrix(keyMat);
+		SHADER.m_spriteShader.DrawTex(&keyTex, Math::Rectangle{ 0, 0, 16, 16 }, 1.0f);
 	}
 	if (clearflag) {
 		SHADER.m_spriteShader.SetMatrix(clearMat);
-		SHADER.m_spriteShader.DrawTex(&clearTex, Math::Rectangle{ 0, 0, 785, 133 }, 1.0f);
-		SHADER.m_spriteShader.DrawString(-300, -150, "Press [Q] to return to title", Math::Vector4(1, 1, 0, 1));
+		SHADER.m_spriteShader.DrawTex(&clearTex, Math::Rectangle{ 0, 0, 496, 83 }, 1.0f);
+		SHADER.m_spriteShader.SetMatrix(clearMat2);
+		SHADER.m_spriteShader.DrawTex(&clearTex2, Math::Rectangle{ 0, 0, 847, 87 }, 1.0f);
+		SHADER.m_spriteShader.SetMatrix(keyMat);
+		SHADER.m_spriteShader.DrawTex(&keyTex, Math::Rectangle{ 0, 0, 16, 16 }, 1.0f);
 	}
 }
 
@@ -55,55 +68,14 @@ void C_GameScene::Update()
 		//RESET();//関数宣言したらALT+Enterで関数定義
 		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
 	}
-	if(!clearflag&&nowtime>0){
-		if (nowtime - PrevEnemy1 >= 100 / wall/wall) {
-			std::shared_ptr<C_Enemy> m_enemy;
-			m_enemy = std::make_shared<C_Enemy>();
-			m_enemy->Init();
-			m_enemy->SetOwner(this);
-			m_enemy->SetPos({ 703,(float)(rand() % 500 - 200) });
-			m_enemy->SetHp(3);
-			m_enemy->SetFlag(1);
-			m_objList.push_back(m_enemy);
-			nowenemy++;
-			PrevEnemy1 = nowtime - (rand() % 3);
-		}
-		if (nowtime - PrevEnemy2 >= 100 / wall/wall) {
-			std::shared_ptr<C_Enemy> m_enemy;
-			m_enemy = std::make_shared<C_Enemy>();
-			m_enemy->Init();
-			m_enemy->SetOwner(this);
-			m_enemy->SetPos({ 703,(float)(rand() % 500 - 200) });
-			m_enemy->SetHp(3);
-			m_enemy->SetFlag(2);
-			m_objList.push_back(m_enemy);
-			nowenemy++;
-			PrevEnemy2 = nowtime - (rand() % 3);
-		}
-		if (wall == 3) {
-			if (nowtime - PrevEnemy3 >= 3000) {
-				std::shared_ptr<C_Enemy> m_enemy;
-				m_enemy = std::make_shared<C_Enemy>();
-				m_enemy->Init();
-				m_enemy->SetOwner(this);
-				m_enemy->SetPos({ 703,(float)(rand() % 500 - 200) });
-				m_enemy->SetHp(20);
-				m_enemy->SetFlag(2);
-				m_objList.push_back(m_enemy);
-				nowenemy++;
-				PrevEnemy3 = nowtime - (rand() % 3);
-			}
-		}
-	}
-	if (score > 0 && !BossFlag) {
+	if (nowtime > 0 && !BossFlag&&!clearflag) {
 		std::shared_ptr<C_Boss> m_boss;
 		m_boss = std::make_shared<C_Boss>();
 		m_boss->Init();
 		m_boss->SetOwner(this);
 		m_boss->SetFlag(1);
-		m_boss->SetHp(100*wall);
-		m_boss->SetMaxHp(100*wall);
-		m_boss->SetFlag(1);
+		m_boss->SetHp(10);
+		m_boss->SetMaxHp(10);
 		m_objList.push_back(m_boss);
 		BossFlag = true;
 	}
@@ -129,8 +101,8 @@ void C_GameScene::Update()
 
 	if (backX1 < -1277)backX1 = 1277;
 	if (backX2 < -1277)backX2 = 1277;
-	backX1 -= 3;
-	backX2 -= 3;
+	backX1 -= 2;
+	backX2 -= 2;
 	if (farX1 < -1277)farX1 = 1277;
 	if (farX2 < -1277)farX2 = 1277;
 	farX1 -= 3;
@@ -143,7 +115,15 @@ void C_GameScene::Update()
 	backMat2 = Math::Matrix::CreateTranslation(backX2,0, 0);
 	farMat1 = Math::Matrix::CreateTranslation(farX1,0, 0);
 	farMat2 = Math::Matrix::CreateTranslation(farX2,0, 0);
-	clearMat = Math::Matrix::CreateTranslation(0,100, 0);
+	clearMat = Math::Matrix::CreateTranslation(0,200, 0);
+	gameoverMat = Math::Matrix::CreateTranslation(0,200, 0);
+	clearMat2 = Math::Matrix::CreateTranslation(0,-200, 0);
+	gameoverMat2 = Math::Matrix::CreateTranslation(0,-200, 0);
+	dangerMat = Math::Matrix::CreateTranslation(-390,-40, 0);
+	Math::Matrix trans = Math::Matrix::CreateTranslation(-190, -200, 0);
+	Math::Matrix scale = Math::Matrix::CreateScale(3, 3, 0);
+	keyMat = scale * trans;
+		
 	
 	rep(ex, expnum) expMat[ex] = Math::Matrix::CreateTranslation(expX[ex], expY[ex], 0);
 }
@@ -158,17 +138,18 @@ void C_GameScene::Init()
 	farTex1.Load("Texture/far.png");
 	farTex2.Load("Texture/far.png");
 	expTex.Load("Texture/explosion.png");
-	clearTex.Load("Texture/Cool Text - Congratulation 507899333126543.png");
+	clearTex.Load("Texture/Gameclear/congratulation.png");
+	clearTex2.Load("Texture/Gameclear/congratulation2.png");
+	gameoverTex.Load("Texture/Gameover/GameOver.png");
+	gameoverTex2.Load("Texture/Gameover/GameOver2.png");
+	keyTex.Load("Texture/UI/icons-keyboard-16x16-1bit-ansdor.png");
+	dangerTex.Load("Texture/UI/danger.png");
 	backX1 = 0;
 	backX2 = 1277;
 	farX1 = 0;
 	farX2 = 1277;
 
-	wall = 1;
-
-	PrevEnemy1 = 0;
-	PrevEnemy2 = 0;
-
+	wall = 0;
 	{
 		std::shared_ptr<C_Player> m_player;
 		m_player = std::make_shared<C_Player>();
@@ -232,7 +213,7 @@ void C_GameScene::RESET()
 	//爆発の初期設定
 	playerFlag = true;
 	clearflag = false;
-	wall = 1;
+	wall = 0;
 	
 }
 
@@ -314,6 +295,32 @@ void C_GameScene::PlayerShot(Math::Vector2 PlayerPos, int flag, float Radius, in
 	m_objList.push_back(mybullet);
 }
 
+void C_GameScene::SpawnWall(int wall)
+{
+	std::shared_ptr<C_Wall> m_wall;
+	m_wall = std::make_shared<C_Wall>();
+	m_wall->Init();
+	m_wall->SetOwner(this);
+	m_wall->SetFlag(1);
+	m_wall->SetHp(100 * wall);
+	m_wall->SetMaxHp(100 * wall);
+	m_wall->SetFlag(1);
+	m_objList.push_back(m_wall);
+}
+
+void C_GameScene::SummonEnemy(int Hp, int flag)
+{
+	std::shared_ptr<C_Enemy> m_enemy;
+	m_enemy = std::make_shared<C_Enemy>();
+	m_enemy->Init();
+	m_enemy->SetOwner(this);
+	m_enemy->SetPos({ 403,(float)(rand() % 500 - 200) });
+	m_enemy->SetHp(Hp);
+	m_enemy->SetFlag(flag);
+	m_objList.push_back(m_enemy);
+	nowenemy++;
+}
+
 void C_GameScene::DropMP(Math::Vector2 Pos,int drop)
 {
 	rep(i,drop){
@@ -334,11 +341,8 @@ void C_GameScene::DropMP(Math::Vector2 Pos,int drop)
 
 void C_GameScene::SetBossFlag(bool flag)
 {
-	if(wall!=3){
-		BossFlag = flag;
-		wall++;
-	}
-	else {
+	BossFlag = flag;
+	if(flag==false) {
 		clearflag = true;
 	}
 }

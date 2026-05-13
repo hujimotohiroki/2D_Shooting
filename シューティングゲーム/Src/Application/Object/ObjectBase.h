@@ -12,7 +12,8 @@ public:
 		Boss,
 		MyBullet,
 		EnemyBullet,
-		Mp
+		Mp,
+		Wall
 	};
 
 	C_ObjectBase();
@@ -55,6 +56,8 @@ protected:
 	int PrevShot;
 	int HP;
 	int MaxHP;
+	int MP;
+	int MaxMP;
 	int Damage;				//与えるダメージ
 	float Angle;
 	float Clean;

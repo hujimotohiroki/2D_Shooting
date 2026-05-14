@@ -28,8 +28,8 @@ void C_Enemy::Init()
 	PrevShot = 0;
 	Clean = 1.0;
 	enemyTex1.Load("Texture/enemy/Book_Small_Grey.png");
-	enemyTex2.Load("Texture/enemy/Book_Small_Grey.png");
-	enemyTex3.Load("Texture/enemy/Book_Small_Grey.png");
+	enemyTex2.Load("Texture/enemy/Book_Small_LightRed.png");
+	enemyTex3.Load("Texture/enemy/Book_Big_LightBlue.png");
 	m_objType = ObjectType::Enemy;
 }
 
@@ -113,7 +113,7 @@ void C_Enemy::Draw()
 		SHADER.m_spriteShader.DrawTex(&enemyTex2, Math::Rectangle{ 0, 0, 32, 32 }, Clean);
 		break;
 	case 3:
-		SHADER.m_spriteShader.DrawTex(&enemyTex3, Math::Rectangle{ 0, 0, 32, 32 }, Clean);
+		SHADER.m_spriteShader.DrawTex(&enemyTex3, Math::Rectangle{ 0, 0, 64, 64 }, Clean);
 		break;
 	}
 }

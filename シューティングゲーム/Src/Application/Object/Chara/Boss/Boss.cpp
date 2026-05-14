@@ -15,16 +15,16 @@ void C_Boss::Init()
 	Pos = { 800,0 };
 	HP = 100;
 	MaxHP = HP;
-	Damage = 50;
+	Damage = 100;
 	Size = 4.0f;	
 	Radius = 64.0f;
-	HitRadius = 16.0f;
+	HitRadius = 64.0f;
 	HitDiff = { 0,0 };
 	Timer = 0;
 	Flag = 0;
 	wall = 0;
 	wallFlag = false;
-	Tex.Load("Texture/Player/player.png");
+	Tex.Load("Texture/Boss/boss.png");
 	m_hpBarFrameTex.Load("Texture/UI/hp bar/1.png");
 	m_hpBarTex.Load("Texture/UI/hp bar/5.png");
 	m_objType = ObjectType::Boss;
@@ -40,7 +40,7 @@ void C_Boss::Update()
 {
 	if (Flag == 1) {
 		wall = m_owner->GetWall();
-		if (Timer > 240 && wallFlag == false && mahouzinTimer > 90) {
+		if (Timer > 240 && wallFlag == false && mahouzinTimer > 90+30*(wall)) {
 			wall++;
 			m_owner->SpawnWall(wall);
 			wallFlag = true;
@@ -62,17 +62,17 @@ void C_Boss::Update()
 			if (mahouzinPos.x < -200.0f)mahouzinPos.x = -200.0f;
 		}
 		m_owner->SetWall(wall);
-		if(wall!=0){
-			if (Timer - PrevEnemy1 >= 100 / wall) {
+		if(wallFlag){
+			if (Timer - PrevEnemy1 >= 100 / wall/wall) {
 				m_owner->SummonEnemy(3, 1);
 				PrevEnemy1 = Timer - (rand() % 3);
 			}
-			if (Timer - PrevEnemy2 >= 100 / wall) {
+			if (Timer - PrevEnemy2 >= 100 / wall/wall) {
 				m_owner->SummonEnemy(3, 2);
 				PrevEnemy2 = Timer - (rand() % 3);
 			}
 			if (wall > 2) {
-				if (Timer - PrevEnemy3 >= 3000) {
+				if (Timer - PrevEnemy3 >= 3000/wall/wall) {
 					m_owner->SummonEnemy(20, 3);
 					PrevEnemy3 = Timer - (rand() % 3);
 				}
@@ -129,7 +129,7 @@ void C_Boss::Draw()
 	}
 	if(Flag){
 		SHADER.m_spriteShader.SetMatrix(Mat);
-		SHADER.m_spriteShader.DrawTex(&Tex, Math::Rectangle{ 0, 0, 32, 32 }, Clean);
+		SHADER.m_spriteShader.DrawTex(&Tex, Math::Rectangle{ (Timer/20%4)*32, 0, 32, 32}, Clean);
 		DrawHpBar();
 	}
 }

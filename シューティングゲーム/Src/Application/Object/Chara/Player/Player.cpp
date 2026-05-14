@@ -22,10 +22,10 @@ void C_Player::Init()
 	Radius = 64.0f;
 	HitRadius = 4.0f;
 	HitDiff = { 24,-44 };
-	HP = 50;
+	HP = 25;
 	MaxHP = HP;
 	MP = 0;
-	MaxMP = 20;
+	MaxMP = 30;
 	MaxMPFlag = false;
 	MaxMPTimer = -300;
 	Lv = 1;
@@ -35,6 +35,11 @@ void C_Player::Init()
 	PrevShot = 0;
 	PrevXKey = 0;
 	Clean = 1.0f;
+	
+	mahouzinClean = 0.0f;
+	mahouzinSize = 10.0f;
+	mahouzinPos = { 0,0 };
+
 	Tex.Load("Texture/Player/player.png");
 	MaxMPTex.Load("Texture/Player/mp max.png");
 	m_hpBarFrameTex.Load("Texture/UI/hp bar/1.png");
@@ -48,6 +53,7 @@ void C_Player::Init()
 	keyTex.Load("Texture/UI/icons-keyboard-16x16-1bit-ansdor.png");
 	m_skillTex.Load("Texture/UI/mp bar/skill.png");
 	underbarTex.Load("Texture/UI/underbar.png");
+	mahouzinTex.Load("Texture/magic circle.png");
 	m_objType = ObjectType::Player;
 }
 
@@ -122,7 +128,7 @@ void C_Player::Update()
 		if (GetAsyncKeyState('X') & 0x8000) {
 			if (MP >= 10&&Timer-PrevXKey>=30) {
 					MP -= 15;
-					m_owner->PlayerShot(Pos, Flag, 32.0f, 1000, 4.0f,0);
+					m_owner->PlayerShot(Pos, 3, 8.0f, 10, 1.0f,0);
 					PrevXKey = Timer;
 				
 			}
@@ -130,7 +136,19 @@ void C_Player::Update()
 		if (GetAsyncKeyState('C') & 0x8000) {
 			if (MP >= 30) {
 				MP -= 30;
-				HP += MaxHP / 3.0f;
+				int mpcnt=0;
+				for (auto& obj : m_owner->GetObjList()) {
+					ObjectType type = obj->GetObjType();
+					if (type == ObjectType::Mp) {
+						Math::Vector2 v;
+						v = obj->GetPos() - Pos;
+						if (v.Length() < 300) {
+							obj->Hit(Damage);
+							mpcnt+=5;
+						}
+					}
+				}
+				HP += mpcnt;
 			}
 		}
 		if (GetAsyncKeyState('V') & 0x8000) {
@@ -139,9 +157,9 @@ void C_Player::Update()
 				MP = 0;
 				if (Lv != MaxLV) {
 					Lv++;
-					MaxMP *= 1.5f; 
-					MaxHP *= 1.2f;
-					HP *= 1.2f;
+					MaxMP *= 1.2f; 
+					MaxHP *= 1.1f;
+					HP *= 1.1f;
 				}
 				else {
 					for (auto& obj : m_owner->GetObjList()) {
@@ -149,12 +167,14 @@ void C_Player::Update()
 						if (type == ObjectType::Mp) {
 							Math::Vector2 v;
 							v = obj->GetPos() - Pos;
-							if (v.Length() < 300) {
+							if (v.Length() < 320) {
 								m_owner->PlayerShot(obj->GetPos(), 2, 8.0f, 1, 1.0f,0);
 								obj->Hit(Damage);
 							}
 						}
 					}
+					mahouzinClean = 1.0f;
+					mahouzinPos = Pos;
 				}
 			}
 		}
@@ -168,17 +188,25 @@ void C_Player::Update()
 		if (Pos.y < -312 + HitDiff.y)Pos.y = -312 + HitDiff.y;
 		for (auto& obj : m_owner->GetObjList()) {
 			ObjectType type = obj->GetObjType();
-			if (type == ObjectType::Enemy || type == ObjectType::Boss || type == ObjectType::EnemyBullet || type == ObjectType::Mp) {
-				Math::Vector2 v;
-				v = obj->GetPos() - Pos;
-				if (v.Length() < HitRadius+obj->GetHitRadius()) {
-					Hit(obj->GetObjDamage());
-					obj->Hit(Damage);
-					if (type == ObjectType::Mp) {
-						AddMp();
-					}
-					else {
-						Clean = 0.3f;
+			if (type == ObjectType::Enemy || type == ObjectType::Boss || type == ObjectType::EnemyBullet || type == ObjectType::Mp || type == ObjectType::Wall) {
+				if(obj->GetFlag()!=-1){
+					Math::Vector2 v;
+					v = obj->GetPos() - Pos;
+					if (v.Length() < HitRadius + obj->GetHitRadius()) {
+						
+						obj->Hit(Damage);
+						if (type == ObjectType::Mp) {
+							AddMp();
+						}
+						else {
+							Clean = 0.3f;
+						}
+						if (!(m_owner->GetClearFlag())) {
+							Hit(obj->GetObjDamage());
+						}
+						else {
+							Clean = 1.0f;
+						}
 					}
 				}
 			}
@@ -216,11 +244,17 @@ void C_Player::Update()
 		MaxMPPos.y += 2;
 		MaxMPMat= Math::Matrix::CreateTranslation(MaxMPPos.x, MaxMPPos.y, 0);
 	}
+	trans = Math::Matrix::CreateTranslation(mahouzinPos.x, (int)(mahouzinPos.y), 0);
+	scale = Math::Matrix::CreateScale(mahouzinSize, mahouzinSize, 0);
+	mahouzinMat = scale * trans;
+	if (mahouzinClean > 0.0f)mahouzinClean -= 0.01f;
 }
 
 void C_Player::Draw()
 {
 	if(Flag!=0){
+		SHADER.m_spriteShader.SetMatrix(mahouzinMat);
+		SHADER.m_spriteShader.DrawTex(&mahouzinTex, Math::Rectangle{ 0,0, 64, 64 }, mahouzinClean);
 		SHADER.m_spriteShader.SetMatrix(Mat);
 		SHADER.m_spriteShader.DrawTex(&Tex, Math::Rectangle{ 0,0, 32, 32 }, Clean);
 		DrawHpBar();

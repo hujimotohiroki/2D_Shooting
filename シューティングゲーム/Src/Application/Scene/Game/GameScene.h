@@ -63,7 +63,7 @@ private:
 
 	int wall;
 
-	
+	int ClearTimer;
 
 	int nowenemy;
 	int nowtime;

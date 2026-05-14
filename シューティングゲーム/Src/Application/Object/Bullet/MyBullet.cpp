@@ -30,8 +30,24 @@ void C_MyBullet::Init()
 void C_MyBullet::Update()
 {
 	if(Flag){
-		if(Flag==1||Timer>30){
+		if(Flag!=2||Timer>30){
 			Pos += Speed * MoveSpeed;
+		}
+		if (Flag == 3) {
+			for (auto& obj : m_owner->GetObjList()) {
+				ObjectType type = obj->GetObjType();
+				if (type == ObjectType::Mp) {
+					Math::Vector2 v;
+					v = obj->GetPos() - Pos;
+					if (v.Length() < HitRadius + obj->GetHitRadius()) {
+						Damage++;
+						Radius += 1.0f;
+						HitRadius += 1.0f;
+						Size = Radius / 8.0f;
+						obj->Hit(Damage);
+					}
+				}
+			}
 		}
 		Timer++;
 		if(Size>3.0f){

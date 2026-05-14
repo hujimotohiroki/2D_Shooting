@@ -17,6 +17,9 @@ private:
 	Math::Vector2 MaxMPPos;
 	KdTexture MaxMPTex;
 	Math::Matrix MaxMPMat;
+	float mahouzinClean;
+	float mahouzinSize;
+	Math::Vector2 mahouzinPos;
 
 	KdTexture m_hpBarFrameTex;
 	KdTexture m_hpBarTex;
@@ -29,6 +32,7 @@ private:
 	KdTexture skillTex3;
 	KdTexture skillTex4;
 	KdTexture underbarTex;
+	KdTexture mahouzinTex;
 	Math::Matrix skillMat1;
 	Math::Matrix skillMat2;
 	Math::Matrix skillMat3;
@@ -36,6 +40,7 @@ private:
 	Math::Matrix keyMat2;
 	Math::Matrix keyMat3;
 	Math::Matrix underbarMat;
+	Math::Matrix mahouzinMat;
 public:
 
 	C_Player();

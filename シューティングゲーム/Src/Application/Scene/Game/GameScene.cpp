@@ -74,8 +74,8 @@ void C_GameScene::Update()
 		m_boss->Init();
 		m_boss->SetOwner(this);
 		m_boss->SetFlag(1);
-		m_boss->SetHp(10);
-		m_boss->SetMaxHp(10);
+		m_boss->SetHp(200);
+		m_boss->SetMaxHp(200);
 		m_objList.push_back(m_boss);
 		BossFlag = true;
 	}
@@ -99,14 +99,16 @@ void C_GameScene::Update()
 		}
 	}
 
-	if (backX1 < -1277)backX1 = 1277;
-	if (backX2 < -1277)backX2 = 1277;
-	backX1 -= 2;
-	backX2 -= 2;
-	if (farX1 < -1277)farX1 = 1277;
-	if (farX2 < -1277)farX2 = 1277;
-	farX1 -= 3;
-	farX2 -= 3;
+	if(wall==0){
+		if (backX1 < -1277)backX1 = 1277;
+		if (backX2 < -1277)backX2 = 1277;
+		backX1 -= 2;
+		backX2 -= 2;
+		if (farX1 < -1277)farX1 = 1277;
+		if (farX2 < -1277)farX2 = 1277;
+		farX1 -= 3;
+		farX2 -= 3;
+	}
 
 	nowtime++;
 
@@ -314,9 +316,14 @@ void C_GameScene::SummonEnemy(int Hp, int flag)
 	m_enemy = std::make_shared<C_Enemy>();
 	m_enemy->Init();
 	m_enemy->SetOwner(this);
-	m_enemy->SetPos({ 403,(float)(rand() % 500 - 200) });
+	m_enemy->SetPos({ 353,(float)(rand() % 500 - 200) });
 	m_enemy->SetHp(Hp);
 	m_enemy->SetFlag(flag);
+	if (flag == 3) {
+		m_enemy->SetSize(4.0f);
+		m_enemy->SetRadius(64.0f);
+		m_enemy->SetHitRadius(64.0f);
+	}
 	m_objList.push_back(m_enemy);
 	nowenemy++;
 }
